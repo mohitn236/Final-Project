@@ -384,7 +384,7 @@ public class AdvertisementPanel extends JPanel {
     private JPanel mapPanel;
     private boolean showingMap = false;
     private BufferedImage mapImage;
-    private String csvFilePath = "/Users/shivansh/Downloads/Map.csv";
+    private String csvFilePath = "src/map/Map.png";
     private List<TrainLocation> trainLocations;
 
     public AdvertisementPanel(Connection connection) {
@@ -450,7 +450,7 @@ public class AdvertisementPanel extends JPanel {
         panel.add(label, BorderLayout.CENTER);
 
         try {
-            mapImage = ImageIO.read(new File("/Users/shivansh/Downloads/Map.png"));
+            mapImage = ImageIO.read(new File("src/map/Map.png"));
             updateTrainLocations();
             BufferedImage updatedMapImage = overlayTrainLocations(mapImage);
             label.setIcon(new ImageIcon(updatedMapImage));
