@@ -1,18 +1,16 @@
 package ca.ucalgary.edu.ensf380;
 
-public class Advertisement {
+class Advertisement {
     private int id;
     private String title;
     private String description;
-    private String mediaFile;
-    private String mediaType;
+    private byte[] mediaFile;
 
-    public Advertisement(int id, String title, String description, String mediaFile, String mediaType) {
+    public Advertisement(int id, String title, String description, byte[] mediaFile) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.mediaFile = mediaFile;
-        this.mediaType = mediaType;
     }
 
     public int getId() {
@@ -27,11 +25,7 @@ public class Advertisement {
         return description;
     }
 
-    public String getMediaFile() {
+    public byte[] getMediaFile() {
         return mediaFile;
-    }
-
-    public String getMediaType() {
-        return mediaType;
     }
 }
