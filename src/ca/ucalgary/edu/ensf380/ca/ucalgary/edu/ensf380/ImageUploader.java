@@ -14,7 +14,7 @@ public class ImageUploader {
     private static final String PASSWORD = "ucalgary";
 
     public static void main(String[] args) {
-        String[] imagePaths = {"/Users/mohit/Desktop/Coding/380summer/Final-Project/src/Media/burger.jpeg", "/Users/mohit/Desktop/Coding/380summer/Final-Project/src/Media/subway.jpeg", "/Users/mohit/Desktop/Coding/380summer/Final-Project/src/Media/pizzahut.jpeg"};
+        String[] imagePaths = {"/Users/shivansh/Downloads/burger.jpeg", "/Users/shivansh/Downloads/pizzahut.jpeg", "/Users/shivansh/Downloads/subway.jpeg"};
         String[] titles = {"Burger Ad", "Pizza Hut Ad", "Subway Ad"};
         String[] descriptions = {
                 "A delicious burger advertisement",
