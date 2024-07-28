@@ -12,7 +12,7 @@ public class TrainPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private JLabel trainLabel;
     private List<Station> stations;
-    private int currentStationIndex = 0; // Assume the current station index is 0 for now
+    private int currentStationIndex = 0;
 
     public TrainPanel(List<Station> stations) {
         setBackground(Color.BLACK);
@@ -83,6 +83,13 @@ public class TrainPanel extends JPanel {
             info.append(transferInfo).append("</html>");
 
             trainLabel.setText(info.toString());
+        }
+    }
+
+    public void setCurrentStationIndex(int index) {
+        if (index >= 0 && index < stations.size()) {
+            currentStationIndex = index;
+            updateTrainInfo();
         }
     }
 

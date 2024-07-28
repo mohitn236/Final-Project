@@ -12,11 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainDisplay extends JFrame {
+    private static final long serialVersionUID = 1L;
     private AdvertisementPanel advertisementPanel;
     private TrainPanel trainPanel;
-    //private WeatherPanel weatherPanel;
+    // private WeatherPanel weatherPanel;
     private NewsTickerPanel newsTickerPanel;
     private List<Station> stations;
+    private int currentStationIndex = 0;
 
     public MainDisplay() {
         setTitle("City Information Display");
@@ -35,17 +37,21 @@ public class MainDisplay extends JFrame {
         stations = readStationsFromCSV("/Users/shivansh/Downloads/Map.csv");
 
         trainPanel = new TrainPanel(stations);
-        //weatherPanel = new WeatherPanel();
+        // weatherPanel = new WeatherPanel();
         newsTickerPanel = new NewsTickerPanel();
 
         JPanel topPanel = new JPanel(new GridLayout(1, 3));
         topPanel.add(advertisementPanel);
-        //topPanel.add(weatherPanel);
+        // topPanel.add(weatherPanel);
         topPanel.add(new JPanel());  // Placeholder for clock or other info
 
         add(topPanel, BorderLayout.CENTER);
         add(trainPanel, BorderLayout.SOUTH);
         add(newsTickerPanel, BorderLayout.NORTH);
+
+        // Timer to update train stations every 10 seconds
+        Timer timer = new Timer(10000, e -> updateTrainStation());
+        timer.start();
 
         setVisible(true);
     }
@@ -104,6 +110,11 @@ public class MainDisplay extends JFrame {
             e.printStackTrace();
         }
         return stations;
+    }
+
+    private void updateTrainStation() {
+        currentStationIndex = (currentStationIndex + 1) % stations.size();
+        trainPanel.setCurrentStationIndex(currentStationIndex);
     }
 
     public static void main(String[] args) {
