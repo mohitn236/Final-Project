@@ -34,7 +34,7 @@ public class MainDisplay extends JFrame {
             advertisementPanel = new AdvertisementPanel(null);
         }
 
-        stations = readStationsFromCSV("/Users/shivansh/Downloads/Map.csv");
+        stations = readStationsFromCSV("src/map/Map.csv");
 
         trainPanel = new TrainPanel(stations);
         // weatherPanel = new WeatherPanel();

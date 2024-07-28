@@ -384,7 +384,7 @@ public class AdvertisementPanel extends JPanel {
     private JPanel mapPanel;
     private boolean showingMap = false;
     private BufferedImage mapImage;
-    private String csvFilePath = "/Users/shivansh/Downloads/Map.csv"; 
+    private String csvFilePath = "src/map/Map.csv"; 
     private List<TrainLocation> trainLocations;
     private final int IMAGE_WIDTH = 800;
     private final int IMAGE_HEIGHT = 600;
@@ -453,7 +453,7 @@ public class AdvertisementPanel extends JPanel {
         panel.add(label, BorderLayout.CENTER);
 
         try {
-            BufferedImage rawMapImage = ImageIO.read(new File("/Users/shivansh/Downloads/Map.png"));
+            BufferedImage rawMapImage = ImageIO.read(new File("src/map/Map.png"));
             mapImage = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = mapImage.createGraphics();
             g.drawImage(rawMapImage, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, null);

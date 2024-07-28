@@ -23,7 +23,7 @@ public class TrainPanel extends JPanel {
 
         this.stations = stations != null ? stations : new ArrayList<>();
         if (this.stations.isEmpty()) {
-            loadStationsFromCSV("/Users/shivansh/Downloads/Map.csv");
+            loadStationsFromCSV("src/map/Map.csv");
         }
         updateTrainInfo();
     }
