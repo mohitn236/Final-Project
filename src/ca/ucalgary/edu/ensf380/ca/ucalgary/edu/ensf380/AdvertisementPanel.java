@@ -384,13 +384,15 @@ public class AdvertisementPanel extends JPanel {
     private JPanel mapPanel;
     private boolean showingMap = false;
     private BufferedImage mapImage;
-    private String csvFilePath = "src/map/Map.png";
+    private String csvFilePath = "/Users/shivansh/Downloads/Map.csv"; 
     private List<TrainLocation> trainLocations;
+    private final int IMAGE_WIDTH = 800;
+    private final int IMAGE_HEIGHT = 600;
 
     public AdvertisementPanel(Connection connection) {
         setLayout(new BorderLayout());
         adLabel = new JLabel("", JLabel.CENTER);
-        adLabel.setPreferredSize(new Dimension(800, 600));
+        adLabel.setPreferredSize(new Dimension(IMAGE_WIDTH, IMAGE_HEIGHT));
         add(adLabel, BorderLayout.CENTER);
 
         mapPanel = createMapPanel();
@@ -428,7 +430,8 @@ public class AdvertisementPanel extends JPanel {
             try {
                 BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageData));
                 if (img != null) {
-                    ImageIcon icon = new ImageIcon(img);
+                    Image scaledImg = img.getScaledInstance(IMAGE_WIDTH, IMAGE_HEIGHT, Image.SCALE_SMOOTH);
+                    ImageIcon icon = new ImageIcon(scaledImg);
                     adLabel.setIcon(icon);
                     adLabel.setText(null); // Clear any previous text
                 } else {
@@ -446,11 +449,16 @@ public class AdvertisementPanel extends JPanel {
     private JPanel createMapPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         JLabel label = new JLabel("", JLabel.CENTER);
-        label.setPreferredSize(new Dimension(800, 600));
+        label.setPreferredSize(new Dimension(IMAGE_WIDTH, IMAGE_HEIGHT));
         panel.add(label, BorderLayout.CENTER);
 
         try {
-            mapImage = ImageIO.read(new File("src/map/Map.png"));
+            BufferedImage rawMapImage = ImageIO.read(new File("/Users/shivansh/Downloads/Map.png"));
+            mapImage = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = mapImage.createGraphics();
+            g.drawImage(rawMapImage, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, null);
+            g.dispose();
+
             updateTrainLocations();
             BufferedImage updatedMapImage = overlayTrainLocations(mapImage);
             label.setIcon(new ImageIcon(updatedMapImage));
@@ -468,14 +476,15 @@ public class AdvertisementPanel extends JPanel {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
-                if (values.length >= 3) {
+                if (values.length >= 6) {
                     try {
-                        int id = Integer.parseInt(values[0]);
-                        int x = Integer.parseInt(values[1]);
-                        int y = Integer.parseInt(values[2]);
-                        trainLocations.add(new TrainLocation(id, x, y));
+                        int stationNumber = Integer.parseInt(values[2]);
+                        int x = Integer.parseInt(values[5]);
+                        int y = Integer.parseInt(values[6]);
+                        trainLocations.add(new TrainLocation(stationNumber, x, y));
                     } catch (NumberFormatException e) {
                         // Skip invalid lines
+                        System.err.println("Skipping invalid line: " + line);
                     }
                 }
             }
@@ -491,6 +500,7 @@ public class AdvertisementPanel extends JPanel {
 
         g.setColor(Color.RED);
         for (TrainLocation location : trainLocations) {
+            System.out.println("Overlaying train at (" + location.getX() + ", " + location.getY() + ")");
             g.fillOval(location.getX() - 5, location.getY() - 5, 10, 10);
         }
 
@@ -566,6 +576,3 @@ class TrainLocation {
         return y;
     }
 }
-
-
-

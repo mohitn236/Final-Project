@@ -11,17 +11,20 @@ import java.util.List;
 public class TrainPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private JLabel trainLabel;
-    private List<TrainStation> stations;
+    private List<Station> stations;
+    private int currentStationIndex = 0; // Assume the current station index is 0 for now
 
-    public TrainPanel() {
+    public TrainPanel(List<Station> stations) {
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(800, 100));
         trainLabel = new JLabel("Train Information");
         trainLabel.setForeground(Color.WHITE);
         add(trainLabel);
 
-        stations = new ArrayList<>();
-        loadStationsFromCSV("data/Map.csv");
+        this.stations = stations != null ? stations : new ArrayList<>();
+        if (this.stations.isEmpty()) {
+            loadStationsFromCSV("/Users/shivansh/Downloads/Map.csv");
+        }
         updateTrainInfo();
     }
 
@@ -31,14 +34,25 @@ public class TrainPanel extends JPanel {
             br.readLine(); // Skip header line
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
-                if (values.length < 7) continue;
-                String lineCode = values[1].trim();
-                int stationNumber = Integer.parseInt(values[2].trim());
-                String stationCode = values[3].trim();
-                String stationName = values[4].trim();
-                double x = Double.parseDouble(values[5].trim());
-                double y = Double.parseDouble(values[6].trim());
-                stations.add(new TrainStation(lineCode, stationNumber, stationCode, stationName, x, y));
+                if (values.length < 7) {
+                    System.err.println("Skipping invalid line: " + line);
+                    continue;
+                }
+                try {
+                    int row = Integer.parseInt(values[0].trim());
+                    String lineCode = values[1].trim();
+                    int stationNumber = Integer.parseInt(values[2].trim());
+                    String stationCode = values[3].trim();
+                    String stationName = values[4].trim();
+                    double x = Double.parseDouble(values[5].trim());
+                    double y = Double.parseDouble(values[6].trim());
+                    String commonStations = values.length > 7 ? values[7].trim() : "";
+
+                    Station station = new Station(row, lineCode, stationNumber, stationCode, stationName, x, y, commonStations);
+                    stations.add(station);
+                } catch (NumberFormatException e) {
+                    System.err.println("Skipping invalid line: " + line);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,32 +61,32 @@ public class TrainPanel extends JPanel {
 
     private void updateTrainInfo() {
         if (!stations.isEmpty()) {
-            TrainStation nextStation = stations.get(0); // Mock data for now
+            StringBuilder info = new StringBuilder("<html>");
+
+            if (currentStationIndex > 0) {
+                Station previousStation = stations.get(currentStationIndex - 1);
+                info.append("Previous Stop: ").append(previousStation.getStationName()).append("<br>");
+            }
+
+            Station currentStation = stations.get(currentStationIndex);
+            info.append("Current Stop: ").append(currentStation.getStationName()).append("<br>");
+
+            for (int i = 1; i <= 4; i++) {
+                int nextIndex = currentStationIndex + i;
+                if (nextIndex < stations.size()) {
+                    Station nextStation = stations.get(nextIndex);
+                    info.append("Next Stop ").append(i).append(": ").append(nextStation.getStationName()).append("<br>");
+                }
+            }
+
             String transferInfo = "You can change to line blue";
+            info.append(transferInfo).append("</html>");
 
-            trainLabel.setText("<html>Next Stop: " + nextStation.stationName + "<br>" + transferInfo + "</html>");
+            trainLabel.setText(info.toString());
         }
     }
 
-    public List<TrainStation> getStations() {
+    public List<Station> getStations() {
         return stations;
-    }
-
-    public static class TrainStation {
-        public String lineCode;
-        public int stationNumber;
-        public String stationCode;
-        public String stationName;
-        public double x;
-        public double y;
-
-        public TrainStation(String lineCode, int stationNumber, String stationCode, String stationName, double x, double y) {
-            this.lineCode = lineCode;
-            this.stationNumber = stationNumber;
-            this.stationCode = stationCode;
-            this.stationName = stationName;
-            this.x = x;
-            this.y = y;
-        }
     }
 }
