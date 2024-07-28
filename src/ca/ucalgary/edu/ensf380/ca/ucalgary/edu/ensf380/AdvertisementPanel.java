@@ -388,6 +388,8 @@ public class AdvertisementPanel extends JPanel {
     private List<TrainLocation> trainLocations;
     private final int IMAGE_WIDTH = 800;
     private final int IMAGE_HEIGHT = 600;
+    private static final long serialVersionUID = 1L;
+
 
     public AdvertisementPanel(Connection connection) {
         setLayout(new BorderLayout());

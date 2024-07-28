@@ -15,12 +15,11 @@ public class MainDisplay extends JFrame {
     private static final long serialVersionUID = 1L;
     private AdvertisementPanel advertisementPanel;
     private TrainPanel trainPanel;
-    // private WeatherPanel weatherPanel;
     private NewsTickerPanel newsTickerPanel;
     private List<Station> stations;
     private int currentStationIndex = 0;
 
-    public MainDisplay() {
+    public MainDisplay(String newsKeyword) {
         setTitle("City Information Display");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -37,19 +36,16 @@ public class MainDisplay extends JFrame {
         stations = readStationsFromCSV("src/map/Map.csv");
 
         trainPanel = new TrainPanel(stations);
-        // weatherPanel = new WeatherPanel();
-        newsTickerPanel = new NewsTickerPanel();
+        newsTickerPanel = new NewsTickerPanel(newsKeyword);
 
         JPanel topPanel = new JPanel(new GridLayout(1, 3));
         topPanel.add(advertisementPanel);
-        // topPanel.add(weatherPanel);
         topPanel.add(new JPanel());  // Placeholder for clock or other info
 
         add(topPanel, BorderLayout.CENTER);
         add(trainPanel, BorderLayout.SOUTH);
         add(newsTickerPanel, BorderLayout.NORTH);
 
-        // Timer to update train stations every 10 seconds
         Timer timer = new Timer(10000, e -> updateTrainStation());
         timer.start();
 
@@ -58,9 +54,7 @@ public class MainDisplay extends JFrame {
 
     private Connection createDatabaseConnection() {
         try {
-            // Load the PostgreSQL JDBC driver
             Class.forName("org.postgresql.Driver");
-            // Establish the connection
             String url = "jdbc:postgresql://localhost:5432/advertisements";
             String username = "oop";
             String password = "ucalgary";
@@ -82,7 +76,7 @@ public class MainDisplay extends JFrame {
             boolean firstLine = true;
             while ((line = br.readLine()) != null) {
                 if (firstLine) {
-                    firstLine = false; // Skip the header line
+                    firstLine = false;
                     continue;
                 }
                 String[] values = line.split(",");
@@ -118,6 +112,7 @@ public class MainDisplay extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new MainDisplay());
+        String newsKeyword = args.length > 0 ? args[0] : "calgary";
+        SwingUtilities.invokeLater(() -> new MainDisplay(newsKeyword));
     }
 }
