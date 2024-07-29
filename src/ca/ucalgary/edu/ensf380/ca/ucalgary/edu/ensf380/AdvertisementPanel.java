@@ -393,9 +393,13 @@ public class AdvertisementPanel extends JPanel {
 
     public AdvertisementPanel(Connection connection) {
         setLayout(new BorderLayout());
+        setBackground(new Color(255, 228, 196));
         adLabel = new JLabel("", JLabel.CENTER);
         adLabel.setPreferredSize(new Dimension(IMAGE_WIDTH, IMAGE_HEIGHT));
+        adLabel.setFont(new Font("Arial", Font.BOLD, 16)); // Set a custom font
         add(adLabel, BorderLayout.CENTER);
+        
+        setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // bordering the panel
 
         mapPanel = createMapPanel();
 
@@ -578,3 +582,8 @@ class TrainLocation {
         return y;
     }
 }
+
+
+
+
+

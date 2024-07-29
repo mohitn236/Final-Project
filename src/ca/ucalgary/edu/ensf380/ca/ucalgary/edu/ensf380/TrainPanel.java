@@ -15,10 +15,14 @@ public class TrainPanel extends JPanel {
     private int currentStationIndex = 0;
 
     public TrainPanel(List<Station> stations) {
-        setBackground(Color.BLACK);
+    	
+        setBackground(new Color(0, 0, 128)); // dark blue color for the background
         setPreferredSize(new Dimension(800, 100));
         trainLabel = new JLabel("Train Information");
+        
         trainLabel.setForeground(Color.WHITE);
+        trainLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
+        
         add(trainLabel);
 
         this.stations = stations != null ? stations : new ArrayList<>();
@@ -97,3 +101,7 @@ public class TrainPanel extends JPanel {
         return stations;
     }
 }
+
+
+
+
