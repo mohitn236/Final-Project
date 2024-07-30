@@ -21,7 +21,7 @@ public class TrainPanel extends JPanel {
         trainLabel = new JLabel("Train Information");
         
         trainLabel.setForeground(Color.WHITE);
-        trainLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
+        trainLabel.setFont(new Font("Verdana", Font.PLAIN, 14));
         
         add(trainLabel);
 
@@ -79,11 +79,11 @@ public class TrainPanel extends JPanel {
                 int nextIndex = currentStationIndex + i;
                 if (nextIndex < stations.size()) {
                     Station nextStation = stations.get(nextIndex);
-                    info.append("Next Stop ").append(i).append(": ").append(nextStation.getStationName()).append("<br>");
+                    info.append("Next Stop ").append(i).append(": ").append(nextStation.getStationName()).append("-->");
                 }
             }
 
-            String transferInfo = "You can change to line blue";
+            String transferInfo = "<br>You can change to line blue";
             info.append(transferInfo).append("</html>");
 
             trainLabel.setText(info.toString());
