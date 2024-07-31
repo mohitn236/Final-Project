@@ -302,7 +302,7 @@ public class NewsTickerPanel extends JPanel {
             }
         }, 0, 60000); // Fetch news every 60 seconds
 
-        scrollTimer = new javax.swing.Timer(100, e -> scrollNews());
+        scrollTimer = new javax.swing.Timer(200, e -> scrollNews());
         scrollTimer.start();
     }
 
