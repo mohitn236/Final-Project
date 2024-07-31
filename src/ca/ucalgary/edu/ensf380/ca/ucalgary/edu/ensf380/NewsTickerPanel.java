@@ -278,7 +278,7 @@ public class NewsTickerPanel extends JPanel {
     private int newsIndex = 0;
     private int charIndex = 0;
     private String currentNews = "";
-    private String apiKey = "pub_49486d9099ea8f9938983cdb2cfa619527a9c"; // Replace with your actual API key
+    private String apiKey = "pub_494866bcb7914a1d2808e27732130296ce529"; // Replace with your actual API key
     private String newsApiUrl = "https://newsdata.io/api/1/news?apikey=" + apiKey;
 
     public NewsTickerPanel(String keyword) {
