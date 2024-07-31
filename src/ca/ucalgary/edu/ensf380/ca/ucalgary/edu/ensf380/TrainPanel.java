@@ -211,7 +211,7 @@ public class TrainPanel extends JPanel {
             loadStationsFromCSV("src/map/Map.csv");
         }
         initializeTrains();
-        initializeSVGCanvas();
+//        initializeSVGCanvas();
         updateTrainInfo();
         startTrainSimulation();
     }
@@ -261,20 +261,20 @@ public class TrainPanel extends JPanel {
         }
     }
 
-    private void initializeSVGCanvas() {
-        svgCanvas = new JSVGCanvas();
-        svgCanvas.setPreferredSize(new Dimension(800, 600));
-        add(svgCanvas, BorderLayout.CENTER);
-        loadSVG("src/map/Trains.svg");
-    }
+//    private void initializeSVGCanvas() {
+//        svgCanvas = new JSVGCanvas();
+//        svgCanvas.setPreferredSize(new Dimension(800, 600));
+//        add(svgCanvas, BorderLayout.CENTER);
+//        loadSVG("src/map/Trains.svg");
+//    }
 
-    private void loadSVG(String filePath) {
-        try {
-            svgCanvas.setURI(new java.io.File(filePath).toURI().toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    private void loadSVG(String filePath) {
+//        try {
+//            svgCanvas.setURI(new java.io.File(filePath).toURI().toString());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private void startTrainSimulation() {
         Timer timer = new Timer();
