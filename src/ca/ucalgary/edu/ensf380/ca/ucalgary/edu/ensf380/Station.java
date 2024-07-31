@@ -16,7 +16,6 @@ public class Station {
     private double y;
     private String commonStations;
     private boolean isCurrentTrainLocation;
-    
 
     public Station(int row, String lineCode, int stationNumber, String stationCode, String stationName, double x, double y, String commonStations) {
         this.row = row;
@@ -27,11 +26,9 @@ public class Station {
         this.x = x;
         this.y = y;
         this.commonStations = commonStations;
-        this.isCurrentTrainLocation = false; //default to false
-        
+        this.isCurrentTrainLocation = false; // default to false
     }
-    
-    // Add this constructor to use only x, y, and stationName
+
     public Station(double x, double y, String stationName) {
         this.x = x;
         this.y = y;
@@ -101,18 +98,16 @@ public class Station {
     public void setCommonStations(String commonStations) {
         this.commonStations = commonStations;
     }
-    
-    // for the current location of the train
-    public boolean isCurrentTrainLocation() { 
+
+    public boolean isCurrentTrainLocation() {
         return isCurrentTrainLocation;
     }
 
-    public void setCurrentTrainLocation(boolean isCurrentTrainLocation) { // New method
+    public void setCurrentTrainLocation(boolean isCurrentTrainLocation) {
         this.isCurrentTrainLocation = isCurrentTrainLocation;
     }
-    
-    
-    public List<Station> loadStations(String csvPath) {
+
+    public static List<Station> loadStations(String csvPath) {
         List<Station> stations = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(csvPath))) {
             String line;
@@ -128,6 +123,4 @@ public class Station {
         }
         return stations;
     }
-
 }
-

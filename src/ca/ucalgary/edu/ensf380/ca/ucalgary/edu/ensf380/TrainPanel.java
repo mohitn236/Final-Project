@@ -12,17 +12,14 @@ public class TrainPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private JLabel trainLabel;
     private List<Station> stations;
-    private int currentStationIndex = 0;
+    private int currentStationIndex = 50;
 
     public TrainPanel(List<Station> stations) {
-    	
         setBackground(new Color(0, 0, 128)); // dark blue color for the background
         setPreferredSize(new Dimension(800, 100));
         trainLabel = new JLabel("Train Information");
-        
         trainLabel.setForeground(Color.WHITE);
         trainLabel.setFont(new Font("Verdana", Font.PLAIN, 14));
-        
         add(trainLabel);
 
         this.stations = stations != null ? stations : new ArrayList<>();
@@ -67,14 +64,17 @@ public class TrainPanel extends JPanel {
         if (!stations.isEmpty()) {
             StringBuilder info = new StringBuilder("<html>");
 
+            // Previous station
             if (currentStationIndex > 0) {
                 Station previousStation = stations.get(currentStationIndex - 1);
                 info.append("Previous Stop: ").append(previousStation.getStationName()).append("<br>");
             }
 
+            // Current station
             Station currentStation = stations.get(currentStationIndex);
             info.append("Current Stop: ").append(currentStation.getStationName()).append("<br>");
 
+            // Next four stations
             for (int i = 1; i <= 4; i++) {
                 int nextIndex = currentStationIndex + i;
                 if (nextIndex < stations.size()) {
@@ -83,16 +83,15 @@ public class TrainPanel extends JPanel {
                 }
             }
 
-            String transferInfo = "<br>You can change to line blue";
-            info.append(transferInfo).append("</html>");
-
             trainLabel.setText(info.toString());
         }
     }
 
     public void setCurrentStationIndex(int index) {
         if (index >= 0 && index < stations.size()) {
+            stations.get(currentStationIndex).setCurrentTrainLocation(false);
             currentStationIndex = index;
+            stations.get(currentStationIndex).setCurrentTrainLocation(true);
             updateTrainInfo();
         }
     }
@@ -100,8 +99,15 @@ public class TrainPanel extends JPanel {
     public List<Station> getStations() {
         return stations;
     }
+
+    public void updateTrainLocation(int stationIndex) {
+        if (stationIndex >= 0 && stationIndex < stations.size()) {
+            for (Station station : stations) {
+                station.setCurrentTrainLocation(false);
+            }
+            currentStationIndex = stationIndex;
+            stations.get(currentStationIndex).setCurrentTrainLocation(true);
+            updateTrainInfo();
+        }
+    }
 }
-
-
-
-
