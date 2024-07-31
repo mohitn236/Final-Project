@@ -3,16 +3,20 @@ package ca.ucalgary.edu.ensf380;
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class TrainPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private JLabel trainLabel;
     private List<Station> stations;
-    private int currentStationIndex = 50;
+    private List<Train> trains;
+    private int currentStationIndex = 0;
 
     public TrainPanel(List<Station> stations) {
         setBackground(new Color(0, 0, 128)); // dark blue color for the background
@@ -26,7 +30,9 @@ public class TrainPanel extends JPanel {
         if (this.stations.isEmpty()) {
             loadStationsFromCSV("src/map/Map.csv");
         }
+        initializeTrains();
         updateTrainInfo();
+        startTrainSimulation();
     }
 
     private void loadStationsFromCSV(String filePath) {
@@ -60,30 +66,70 @@ public class TrainPanel extends JPanel {
         }
     }
 
-    private void updateTrainInfo() {
-        if (!stations.isEmpty()) {
-            StringBuilder info = new StringBuilder("<html>");
+    private void initializeTrains() {
+        trains = new ArrayList<>();
+        int numberOfTrains = 12;
+        int distanceBetweenTrains = 4;
 
-            // Previous station
-            if (currentStationIndex > 0) {
-                Station previousStation = stations.get(currentStationIndex - 1);
-                info.append("Previous Stop: ").append(previousStation.getStationName()).append("<br>");
+        for (int i = 0; i < numberOfTrains; i++) {
+            int stationIndex = (i * distanceBetweenTrains) % stations.size();
+            String direction = (i % 2 == 0) ? "forward" : "backward";
+            Train train = new Train(i + 1, direction, 1);
+            trains.add(train);
+            stations.get(stationIndex).setTrain(train);
+        }
+    }
+
+    private void startTrainSimulation() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                simulateTrainMovement();
+                updateTrainInfo();
+                outputTrainPositions();
             }
+        }, 0, 15000); // 15 seconds interval
+    }
 
-            // Current station
-            Station currentStation = stations.get(currentStationIndex);
-            info.append("Current Stop: ").append(currentStation.getStationName()).append("<br>");
-
-            // Next four stations
-            for (int i = 1; i <= 4; i++) {
-                int nextIndex = currentStationIndex + i;
-                if (nextIndex < stations.size()) {
-                    Station nextStation = stations.get(nextIndex);
-                    info.append("Next Stop ").append(i).append(": ").append(nextStation.getStationName()).append("-->");
+    private void simulateTrainMovement() {
+        for (Train train : trains) {
+            for (Station station : stations) {
+                if (station.getTrain() == train) {
+                    int currentIndex = stations.indexOf(station);
+                    station.setTrain(null);
+                    int nextIndex;
+                    if ("forward".equals(train.getDirection())) {
+                        nextIndex = (currentIndex + train.getSpeed()) % stations.size();
+                    } else {
+                        nextIndex = (currentIndex - train.getSpeed() + stations.size()) % stations.size();
+                    }
+                    stations.get(nextIndex).setTrain(train);
+                    break;
                 }
             }
+        }
+    }
 
-            trainLabel.setText(info.toString());
+    private void updateTrainInfo() {
+        StringBuilder info = new StringBuilder("<html>");
+        for (Station station : stations) {
+            if (station.hasTrain()) {
+                info.append("Train ").append(station.getTrain().getId()).append(" is at ").append(station.getStationName()).append("<br>");
+            }
+        }
+        trainLabel.setText(info.toString());
+    }
+
+    private void outputTrainPositions() {
+        try (FileWriter writer = new FileWriter("train_positions.txt")) {
+            for (Station station : stations) {
+                if (station.hasTrain()) {
+                    writer.write("Train " + station.getTrain().getId() + " is at " + station.getStationName() + "\n");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
