@@ -1,5 +1,11 @@
 package ca.ucalgary.edu.ensf380;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Station {
     private int row;
     private String lineCode;
@@ -9,6 +15,8 @@ public class Station {
     private double x;
     private double y;
     private String commonStations;
+    private boolean isCurrentTrainLocation;
+    
 
     public Station(int row, String lineCode, int stationNumber, String stationCode, String stationName, double x, double y, String commonStations) {
         this.row = row;
@@ -19,6 +27,15 @@ public class Station {
         this.x = x;
         this.y = y;
         this.commonStations = commonStations;
+        this.isCurrentTrainLocation = false; //default to false
+        
+    }
+    
+    // Add this constructor to use only x, y, and stationName
+    public Station(double x, double y, String stationName) {
+        this.x = x;
+        this.y = y;
+        this.stationName = stationName;
     }
 
     public int getRow() {
@@ -84,5 +101,33 @@ public class Station {
     public void setCommonStations(String commonStations) {
         this.commonStations = commonStations;
     }
+    
+    // for the current location of the train
+    public boolean isCurrentTrainLocation() { 
+        return isCurrentTrainLocation;
+    }
+
+    public void setCurrentTrainLocation(boolean isCurrentTrainLocation) { // New method
+        this.isCurrentTrainLocation = isCurrentTrainLocation;
+    }
+    
+    
+    public List<Station> loadStations(String csvPath) {
+        List<Station> stations = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(csvPath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                double x = Double.parseDouble(data[0]);
+                double y = Double.parseDouble(data[1]);
+                String name = data[2];
+                stations.add(new Station(x, y, name));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return stations;
+    }
+
 }
 

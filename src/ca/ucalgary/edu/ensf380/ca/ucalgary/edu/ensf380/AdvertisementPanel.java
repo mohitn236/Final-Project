@@ -389,6 +389,7 @@ public class AdvertisementPanel extends JPanel {
     private final int IMAGE_WIDTH = 800;
     private final int IMAGE_HEIGHT = 600;
     private static final long serialVersionUID = 1L;
+    private int currentStationIndex;
 
 
     public AdvertisementPanel(Connection connection) {
@@ -459,13 +460,13 @@ public class AdvertisementPanel extends JPanel {
         panel.add(label, BorderLayout.CENTER);
 
         try {
-            BufferedImage rawMapImage = ImageIO.read(new File("src/map/Map.png"));
+            BufferedImage rawMapImage = ImageIO.read(new File("src/map/Map.png")); // trying another image
             mapImage = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = mapImage.createGraphics();
             g.drawImage(rawMapImage, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, null);
             g.dispose();
 
-            updateTrainLocations();
+            updateTrainLocations(currentStationIndex);
             BufferedImage updatedMapImage = overlayTrainLocations(mapImage);
             label.setIcon(new ImageIcon(updatedMapImage));
         } catch (IOException e) {
@@ -476,22 +477,51 @@ public class AdvertisementPanel extends JPanel {
         return panel;
     }
 
-    private void updateTrainLocations() {
+//    private void updateTrainLocations() {
+//        trainLocations = new ArrayList<>();
+//        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
+//            String line;
+//            while ((line = br.readLine()) != null) {
+//                String[] values = line.split(",");
+//                if (values.length >= 6) {
+//                    try {
+//                        int stationNumber = Integer.parseInt(values[2]);
+//                        int x = Integer.parseInt(values[5]);
+//                        int y = Integer.parseInt(values[6]);
+//                        trainLocations.add(new TrainLocation(stationNumber, x, y));
+//                    } catch (NumberFormatException e) {
+//                        // Skip invalid lines
+//                        System.err.println("Skipping invalid line: " + line);
+//                    }
+//                }
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+    private void updateTrainLocations(int currentStationIndex) {
         trainLocations = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
             String line;
+            br.readLine(); // Skip header line
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
-                if (values.length >= 6) {
+                if (values.length >= 7) {
                     try {
-                        int stationNumber = Integer.parseInt(values[2]);
-                        int x = Integer.parseInt(values[5]);
-                        int y = Integer.parseInt(values[6]);
-                        trainLocations.add(new TrainLocation(stationNumber, x, y));
+                        int stationNumber = Integer.parseInt(values[2].trim());
+                        double x = Double.parseDouble(values[5].trim());
+                        double y = Double.parseDouble(values[6].trim());
+
+                        TrainLocation location = new TrainLocation(stationNumber, (int) x, (int) y);
+                        if (stationNumber == currentStationIndex) {
+                            location.setCurrentTrain(true);
+                        }
+                        trainLocations.add(location);
                     } catch (NumberFormatException e) {
-                        // Skip invalid lines
                         System.err.println("Skipping invalid line: " + line);
                     }
+                } else {
+                    System.err.println("Skipping invalid line: " + line);
                 }
             }
         } catch (IOException e) {
@@ -499,23 +529,45 @@ public class AdvertisementPanel extends JPanel {
         }
     }
 
+
+
+//    private BufferedImage overlayTrainLocations(BufferedImage baseImage) {
+//        BufferedImage overlayedImage = new BufferedImage(baseImage.getWidth(), baseImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+//        Graphics2D g = overlayedImage.createGraphics();
+//        g.drawImage(baseImage, 0, 0, null);
+//
+//        g.setColor(Color.RED);
+//        for (TrainLocation location : trainLocations) {
+//            System.out.println("Overlaying train at (" + location.getX() + ", " + location.getY() + ")");
+//            g.fillOval(location.getX() - 5, location.getY() - 5, 10, 10);
+//        }
+//
+//        g.dispose();
+//        return overlayedImage;
+//    }
+    
     private BufferedImage overlayTrainLocations(BufferedImage baseImage) {
         BufferedImage overlayedImage = new BufferedImage(baseImage.getWidth(), baseImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = overlayedImage.createGraphics();
         g.drawImage(baseImage, 0, 0, null);
 
-        g.setColor(Color.RED);
         for (TrainLocation location : trainLocations) {
-            System.out.println("Overlaying train at (" + location.getX() + ", " + location.getY() + ")");
-            g.fillOval(location.getX() - 5, location.getY() - 5, 10, 10);
+            if (location.isCurrentTrain()) {
+                g.setColor(Color.GREEN); // Different color for the current train
+                g.fillOval(location.getX() - 7, location.getY() - 7, 14, 14); // Larger circle for visibility
+            } else {
+                g.setColor(Color.RED);
+                g.fillOval(location.getX() - 5, location.getY() - 5, 10, 10);
+            }
         }
 
         g.dispose();
         return overlayedImage;
     }
 
+
     private void displayMap() {
-        updateTrainLocations();
+        updateTrainLocations(currentStationIndex);
         BufferedImage updatedMapImage = overlayTrainLocations(mapImage);
         ((JLabel) mapPanel.getComponent(0)).setIcon(new ImageIcon(updatedMapImage));
         remove(adLabel);
@@ -524,13 +576,43 @@ public class AdvertisementPanel extends JPanel {
         repaint();
     }
 
+
     private void hideMap() {
         remove(mapPanel);
         add(adLabel, BorderLayout.CENTER);
         revalidate();
         repaint();
     }
+//
+//    private void startAdRotation() {
+//        timer = new Timer(true);
+//        timer.scheduleAtFixedRate(new TimerTask() {
+//            @Override
+//            public void run() {
+//                SwingUtilities.invokeLater(() -> {
+//                    if (showingMap) {
+//                        hideMap();
+//                        showingMap = false;
+//                    } else {
+//                        currentAdIndex = (currentAdIndex + 1) % advertisements.size();
+//                        displayAdvertisement(advertisements.get(currentAdIndex));
+//                        new Timer().schedule(new TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                SwingUtilities.invokeLater(() -> {
+//                                    displayMap();
+//                                    showingMap = true;
+//                                });
+//                            }
+//                        }, 10000);
+//                    }
+//                });
+//            }
+//        }, 0, 15000); // Change ads every 15 seconds (10s ad + 5s map)
+//    }
+//}
 
+    
     private void startAdRotation() {
         timer = new Timer(true);
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -547,6 +629,7 @@ public class AdvertisementPanel extends JPanel {
                             @Override
                             public void run() {
                                 SwingUtilities.invokeLater(() -> {
+                                    updateTrainLocations(currentStationIndex); // Update with current train position
                                     displayMap();
                                     showingMap = true;
                                 });
@@ -557,17 +640,18 @@ public class AdvertisementPanel extends JPanel {
             }
         }, 0, 15000); // Change ads every 15 seconds (10s ad + 5s map)
     }
-}
 
 class TrainLocation {
     private int id;
     private int x;
     private int y;
+    private boolean isCurrentTrain;
 
     public TrainLocation(int id, int x, int y) {
         this.id = id;
         this.x = x;
         this.y = y;
+        this.isCurrentTrain = false;
     }
 
     public int getId() {
@@ -581,6 +665,18 @@ class TrainLocation {
     public int getY() {
         return y;
     }
+    
+    // setter and getter for isCurrentTrain
+    public boolean isCurrentTrain() {
+    	return isCurrentTrain;
+    }
+    
+    public void setCurrentTrain(boolean isCurrentTrain) {
+    	this.isCurrentTrain = isCurrentTrain;
+    }
+
+}
+
 }
 
 

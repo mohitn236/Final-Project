@@ -5,12 +5,14 @@ class Advertisement {
     private String title;
     private String description;
     private byte[] mediaFile;
+    
 
     public Advertisement(int id, String title, String description, byte[] mediaFile) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.mediaFile = mediaFile;
+       
     }
 
     public int getId() {
