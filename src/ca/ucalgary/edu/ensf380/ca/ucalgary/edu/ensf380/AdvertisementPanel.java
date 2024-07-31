@@ -654,6 +654,8 @@ public class AdvertisementPanel extends JPanel {
     private final int IMAGE_HEIGHT = 600;
     private static final long serialVersionUID = 1L;
     private int currentStationIndex;
+  
+
 
     public AdvertisementPanel(Connection connection) {
         setLayout(new BorderLayout());
@@ -676,6 +678,11 @@ public class AdvertisementPanel extends JPanel {
 
         // Create map panel
         mapPanel = createMapPanel();
+        
+        
+
+   
+
 
         // Load advertisements
         advertisements = loadAdvertisements(connection);
@@ -684,6 +691,8 @@ public class AdvertisementPanel extends JPanel {
             startAdRotation();
         }
     }
+    
+   
 
     private List<Advertisement> loadAdvertisements(Connection connection) {
         List<Advertisement> ads = new ArrayList<>();
