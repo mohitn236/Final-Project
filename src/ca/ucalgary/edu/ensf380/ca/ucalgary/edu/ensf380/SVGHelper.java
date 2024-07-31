@@ -1,5 +1,5 @@
 package ca.ucalgary.edu.ensf380;
-
+// Necessary batik imports needed 
 import org.apache.batik.transcoder.*;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 
@@ -36,3 +36,5 @@ public class SVGHelper {
         }
     }
 }
+
+
