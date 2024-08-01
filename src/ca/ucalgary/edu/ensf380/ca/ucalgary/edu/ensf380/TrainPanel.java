@@ -408,41 +408,70 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TrainPanel extends JLayeredPane {
+public class TrainPanel extends JPanel {
     private static final long serialVersionUID = 1L;
+    private JLabel trainLabel;
     private JSVGCanvas svgCanvas;
     private List<Station> stations;
     private List<Train> trains;
-    private int currentStationIndex = 0;
+    private int currentStationIndex = 10;
+    
 
     public TrainPanel(List<Station> stations) {
-        setLayout(null); // Use null layout for manual positioning
-        setBackground(new Color(255, 255, 255)); // Set background color to white
-        setPreferredSize(new Dimension(800, 600));
+        setBackground(new Color(0, 0, 128)); // dark blue color for the background
+        setPreferredSize(new Dimension(800, 100));
+        trainLabel = new JLabel("Train Information");
+        trainLabel.setForeground(Color.WHITE);
+        trainLabel.setFont(new Font("Verdana", Font.PLAIN, 14));
+        add(trainLabel);
 
         this.stations = stations != null ? stations : new ArrayList<>();
         if (this.stations.isEmpty()) {
             loadStationsFromCSV("src/map/Map.csv");
         }
-
-        initializeSVGCanvas(); // Initialize SVG canvas before adding other components
         initializeTrains();
+//        initializeSVGCanvas();
         updateTrainInfo();
         startTrainSimulation();
     }
-
-    private void initializeSVGCanvas() {
-        svgCanvas = new JSVGCanvas();
-        svgCanvas.setPreferredSize(new Dimension(800, 600));
-        svgCanvas.setBounds(0, 0, 800, 600); // Set bounds for the canvas
-        add(svgCanvas, JLayeredPane.DEFAULT_LAYER); // Add SVG canvas at the default layer
-        loadSVG("src/map/Trains.svg");
+    
+    public TrainPanel(int initialStationIndex) {
+        this.currentStationIndex = initialStationIndex;
+        // Other initialization code...
+    }
+    
+    public int getCurrentStationIndex() {
+        return currentStationIndex;
     }
 
-    private void loadSVG(String filePath) {
-        try {
-            svgCanvas.setURI(new java.io.File(filePath).toURI().toString());
-        } catch (Exception e) {
+
+    private void loadStationsFromCSV(String filePath) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            br.readLine(); // Skip header line
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                if (values.length < 7) {
+                    System.err.println("Skipping invalid line: " + line);
+                    continue;
+                }
+                try {
+                    int row = Integer.parseInt(values[0].trim());
+                    String lineCode = values[1].trim();
+                    int stationNumber = Integer.parseInt(values[2].trim());
+                    String stationCode = values[3].trim();
+                    String stationName = values[4].trim();
+                    double x = Double.parseDouble(values[5].trim());
+                    double y = Double.parseDouble(values[6].trim());
+                    String commonStations = values.length > 7 ? values[7].trim() : "";
+
+                    Station station = new Station(row, lineCode, stationNumber, stationCode, stationName, x, y, commonStations);
+                    stations.add(station);
+                } catch (NumberFormatException e) {
+                    System.err.println("Skipping invalid line: " + line);
+                }
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -460,6 +489,21 @@ public class TrainPanel extends JLayeredPane {
             stations.get(stationIndex).setTrain(train);
         }
     }
+
+//    private void initializeSVGCanvas() {
+//        svgCanvas = new JSVGCanvas();
+//        svgCanvas.setPreferredSize(new Dimension(800, 600));
+//        add(svgCanvas, BorderLayout.CENTER);
+//        loadSVG("src/map/Trains.svg");
+//    }
+
+//    private void loadSVG(String filePath) {
+//        try {
+//            svgCanvas.setURI(new java.io.File(filePath).toURI().toString());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private void startTrainSimulation() {
         Timer timer = new Timer();
@@ -494,29 +538,27 @@ public class TrainPanel extends JLayeredPane {
     }
 
     private void updateTrainInfo() {
-        removeAllLabels(); // Remove old labels before updating
+        StringBuilder info = new StringBuilder("<html>");
+        
+        // Ensure we have at least 5 stations to show
+        if (stations.size() > 0) {
+            int previousIndex = (currentStationIndex - 1 + stations.size()) % stations.size();
+            info.append("Previous Station: ").append(stations.get(previousIndex).getStationName()).append("<br>");
 
-        for (Station station : stations) {
-            if (station.hasTrain()) {
-                JLabel trainInfoLabel = new JLabel("Train " + station.getTrain().getId() + " is here");
-                trainInfoLabel.setForeground(Color.RED);
-                trainInfoLabel.setBounds((int) station.getX(), (int) station.getY(), 150, 20); // Adjust label position and size
-                add(trainInfoLabel, JLayeredPane.PALETTE_LAYER); // Add labels above the SVG map
+            info.append("Current Station: ").append(stations.get(currentStationIndex).getStationName()).append("<br>");
+            
+            for (int i = 1; i <= 4; i++) {
+                int nextIndex = (currentStationIndex + i) % stations.size();
+                info.append("Next Station ").append(i).append(": ").append(stations.get(nextIndex).getStationName()).append("->");
             }
+        } else {
+            info.append("No stations available.");
         }
-        revalidate();
-        repaint();
+        
+        info.append("</html>");
+        trainLabel.setText(info.toString());
     }
 
-    private void removeAllLabels() {
-        // Iterate over all components and remove labels
-        Component[] components = getComponents();
-        for (Component component : components) {
-            if (component instanceof JLabel && component != svgCanvas) {
-                remove(component);
-            }
-        }
-    }
 
     private void updateTrainPositionsOnSVG() {
         Document document = svgCanvas.getSVGDocument();
@@ -551,37 +593,6 @@ public class TrainPanel extends JLayeredPane {
         }
     }
 
-    private void loadStationsFromCSV(String filePath) {
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            br.readLine(); // Skip header line
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                if (values.length < 7) {
-                    System.err.println("Skipping invalid line: " + line);
-                    continue;
-                }
-                try {
-                    int row = Integer.parseInt(values[0].trim());
-                    String lineCode = values[1].trim();
-                    int stationNumber = Integer.parseInt(values[2].trim());
-                    String stationCode = values[3].trim();
-                    String stationName = values[4].trim();
-                    double x = Double.parseDouble(values[5].trim());
-                    double y = Double.parseDouble(values[6].trim());
-                    String commonStations = values.length > 7 ? values[7].trim() : "";
-
-                    Station station = new Station(row, lineCode, stationNumber, stationCode, stationName, x, y, commonStations);
-                    stations.add(station);
-                } catch (NumberFormatException e) {
-                    System.err.println("Skipping invalid line: " + line);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void setCurrentStationIndex(int index) {
         if (index >= 0 && index < stations.size()) {
             stations.get(currentStationIndex).setCurrentTrainLocation(false);
@@ -606,4 +617,5 @@ public class TrainPanel extends JLayeredPane {
         }
     }
 }
+
 

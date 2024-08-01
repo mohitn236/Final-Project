@@ -221,8 +221,8 @@ public class MainDisplay extends JFrame {
         topPanel.add(topRightPanel, BorderLayout.EAST);
 
         add(topPanel, BorderLayout.NORTH);
-        add(newsTickerPanel, BorderLayout.SOUTH);
-        add(trainPanel, BorderLayout.CENTER); // Move trainPanel to the center
+        add(newsTickerPanel, BorderLayout.CENTER);
+        add(trainPanel, BorderLayout.SOUTH);
 
         // Timer to update the train station information
         javax.swing.Timer trainTimer = new javax.swing.Timer(10000, e -> updateTrainStation());
@@ -237,7 +237,7 @@ public class MainDisplay extends JFrame {
     private void updateWeatherInfo() {
         new Thread(() -> {
             try {
-                String weatherReport = weatherPanel.fetchWeatherReport("Regina"); // Modify location as needed
+                String weatherReport = weatherPanel.fetchWeatherReport("Calgary"); // Modify location as needed
                 SwingUtilities.invokeLater(() -> weatherLabel.setText("<html>" + weatherReport.replace("\n", "<br>") + "</html>"));
             } catch (Exception e) {
                 e.printStackTrace();

@@ -1,6 +1,4 @@
-
 package ca.ucalgary.edu.ensf380;
-
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -21,7 +19,7 @@ public class WeatherPanel {
         String weatherData = getWeatherData(requestUrl);
         String detailedReport = prepareWeatherData(weatherData);
         String currentDate = getCurrentDate();
-        return "Date: " + currentDate + "\n" + detailedReport;
+        return formatWeatherReport(location, currentDate, detailedReport);
     }
 
     private static String getCurrentDate() {
@@ -39,7 +37,7 @@ public class WeatherPanel {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()));
         StringBuilder responseContent = new StringBuilder();
         String line;
-        
+
         while ((line = bufferedReader.readLine()) != null) {
             responseContent.append(line).append("\n");
         }
@@ -53,14 +51,17 @@ public class WeatherPanel {
         StringBuilder organizedData = new StringBuilder();
         for (String segment : dataSegments) {
             if (!segment.trim().isEmpty()) {
-                if (isWeatherDescriptor(segment)) {
-                    segment = segment + " " + getWeatherEmoji(segment);
+                // Clean up any unwanted characters
+                String cleanedSegment = segment.replaceAll("[^\\p{L}\\p{N}\\s]", "").trim();
+                if (isWeatherDescriptor(cleanedSegment)) {
+                    cleanedSegment = cleanedSegment + " " + getWeatherEmoji(cleanedSegment);
                 }
-                organizedData.append(segment).append(" ");
+                organizedData.append(cleanedSegment).append("\n");
             }
         }
         return organizedData.toString().trim();
     }
+
 
     private static boolean isWeatherDescriptor(String segment) {
         String[] descriptors = {"Partly", "Cloudy", "Sunny", "Rain", "Snow"};
@@ -89,4 +90,15 @@ public class WeatherPanel {
         }
     }
 
+    private static String formatWeatherReport(String city, String date, String report) {
+        StringBuilder formattedReport = new StringBuilder();
+        formattedReport.append("Weather Report\n");
+        formattedReport.append("====================\n");
+        formattedReport.append("City: ").append(city).append("\n");
+        formattedReport.append("Date: ").append(date).append("\n");
+        formattedReport.append("\nWeather Details:\n");
+        formattedReport.append(report).append("\n");
+        formattedReport.append("====================\n");
+        return formattedReport.toString();
+    }
 }

@@ -291,7 +291,7 @@ public class NewsTickerPanel extends JPanel {
         add(newsLabel, BorderLayout.CENTER);
         setBackground(Color.BLACK);
         
-        setPreferredSize(new Dimension(800, 50)); // Smaller panel size
+        setPreferredSize(new Dimension(800, 30)); // Smaller panel size
 
         if (keyword != null && !keyword.isEmpty()) {
             newsApiUrl += "&q=" + URLEncoder.encode(keyword, StandardCharsets.UTF_8);

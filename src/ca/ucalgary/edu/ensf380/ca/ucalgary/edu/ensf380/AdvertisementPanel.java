@@ -796,14 +796,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
+import java.util.TimerTask;
 
 public class AdvertisementPanel extends JPanel {
     private List<Advertisement> advertisements;
     private int currentAdIndex = 0;
     private JLabel adLabel;
+    private JLabel trainInfoLabel;
     private Timer timer;
     private JPanel mapPanel;
     private boolean showingMap = false;
@@ -818,16 +820,26 @@ public class AdvertisementPanel extends JPanel {
     public AdvertisementPanel(Connection connection) {
         setLayout(new BorderLayout());
         setBackground(new Color(255, 228, 196));
+
+        // Advertisement label
         adLabel = new JLabel("", JLabel.CENTER);
         adLabel.setPreferredSize(new Dimension(IMAGE_WIDTH, IMAGE_HEIGHT));
         adLabel.setFont(new Font("Arial", Font.BOLD, 16)); // Set a custom font
         add(adLabel, BorderLayout.CENTER);
-        
-        setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // bordering the panel
 
+        // Train information label
+        trainInfoLabel = new JLabel("Train Information", JLabel.CENTER);
+        trainInfoLabel.setPreferredSize(new Dimension(IMAGE_WIDTH, 50));
+        trainInfoLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        trainInfoLabel.setForeground(Color.BLACK);
+        add(trainInfoLabel, BorderLayout.NORTH);
+
+        setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Border around the panel
+
+        // Create map panel
         mapPanel = createMapPanel();
-        add(mapPanel, BorderLayout.CENTER); // Ensure mapPanel is added here
 
+        // Load advertisements
         advertisements = loadAdvertisements(connection);
         if (advertisements.size() > 0) {
             displayAdvertisement(advertisements.get(currentAdIndex));
@@ -886,10 +898,7 @@ public class AdvertisementPanel extends JPanel {
         try {
             BufferedImage svgImage = SVGHelper.loadSVGImage("src/map/Trains.svg");
             if (svgImage != null) {
-                mapImage = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g = mapImage.createGraphics();
-                g.drawImage(svgImage, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, null);
-                g.dispose();
+                mapImage = svgImage;
 
                 updateTrainLocations(currentStationIndex);
                 BufferedImage updatedMapImage = overlayTrainLocations(mapImage);
@@ -971,6 +980,18 @@ public class AdvertisementPanel extends JPanel {
         repaint();
     }
 
+    private void updateTrainInfo() {
+        StringBuilder info = new StringBuilder("<html>");
+        for (TrainLocation location : trainLocations) {
+            if (location.isCurrentTrain()) {
+                info.append("Train ").append(location.getId()).append(" is at position (")
+                        .append(location.getX()).append(", ").append(location.getY()).append(")<br>");
+            }
+        }
+        info.append("</html>");
+        trainInfoLabel.setText(info.toString());
+    }
+
     private void startAdRotation() {
         timer = new Timer(true);
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -983,6 +1004,7 @@ public class AdvertisementPanel extends JPanel {
                     } else {
                         currentAdIndex = (currentAdIndex + 1) % advertisements.size();
                         displayAdvertisement(advertisements.get(currentAdIndex));
+                        updateTrainInfo(); // Update train info before displaying the map
                         new Timer().schedule(new TimerTask() {
                             @Override
                             public void run() {
@@ -992,12 +1014,32 @@ public class AdvertisementPanel extends JPanel {
                                     showingMap = true;
                                 });
                             }
-                        }, 10000); // Show map after displaying ad for 10 seconds
+                        }, 10000); // Delay before showing map
                     }
                 });
             }
         }, 0, 15000); // Change ads every 15 seconds (10s ad + 5s map)
     }
 
- 
+    public BufferedImage getMapImage() {
+        return mapImage;
+    }
+
+    public JPanel getMapPanel() {
+        return mapPanel;
+    }
+
+    public void updateTrainLocationsFromPanel(TrainPanel panel) {
+        this.currentStationIndex = panel.getCurrentStationIndex(); // Assuming TrainPanel provides this info
+        updateTrainLocations(currentStationIndex);
+    }
 }
+
+
+
+
+
+
+
+
+
