@@ -285,11 +285,13 @@ public class NewsTickerPanel extends JPanel {
         setLayout(new BorderLayout());
         newsLabel = new JLabel("Loading news...", SwingConstants.CENTER);
         newsLabel.setForeground(Color.WHITE);
-        newsLabel.setFont(new Font("Sans Serif", Font.PLAIN, 14)); // different font
+        newsLabel.setFont(new Font("Courier New", Font.PLAIN, 20)); // different font
         newsLabel.setHorizontalAlignment(SwingConstants.CENTER);
         newsLabel.setVerticalAlignment(SwingConstants.CENTER);
         add(newsLabel, BorderLayout.CENTER);
         setBackground(Color.BLACK);
+        
+        setPreferredSize(new Dimension(800, 50)); // Smaller panel size
 
         if (keyword != null && !keyword.isEmpty()) {
             newsApiUrl += "&q=" + URLEncoder.encode(keyword, StandardCharsets.UTF_8);

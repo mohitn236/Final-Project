@@ -197,6 +197,7 @@ public class TrainPanel extends JPanel {
     private List<Station> stations;
     private List<Train> trains;
     private int currentStationIndex = 0;
+    
 
     public TrainPanel(List<Station> stations) {
         setBackground(new Color(0, 0, 128)); // dark blue color for the background
@@ -215,6 +216,16 @@ public class TrainPanel extends JPanel {
         updateTrainInfo();
         startTrainSimulation();
     }
+    
+    public TrainPanel(int initialStationIndex) {
+        this.currentStationIndex = initialStationIndex;
+        // Other initialization code...
+    }
+    
+    public int getCurrentStationIndex() {
+        return currentStationIndex;
+    }
+
 
     private void loadStationsFromCSV(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
