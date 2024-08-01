@@ -221,8 +221,8 @@ public class MainDisplay extends JFrame {
         topPanel.add(topRightPanel, BorderLayout.EAST);
 
         add(topPanel, BorderLayout.NORTH);
-        add(newsTickerPanel, BorderLayout.CENTER);
-        add(trainPanel, BorderLayout.SOUTH);
+        add(newsTickerPanel, BorderLayout.SOUTH);
+        add(trainPanel, BorderLayout.CENTER); // Move trainPanel to the center
 
         // Timer to update the train station information
         javax.swing.Timer trainTimer = new javax.swing.Timer(10000, e -> updateTrainStation());
