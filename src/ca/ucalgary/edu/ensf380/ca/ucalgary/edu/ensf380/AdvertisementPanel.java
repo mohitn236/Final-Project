@@ -566,7 +566,6 @@ public class AdvertisementPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private int currentStationIndex;
 
-
     public AdvertisementPanel(Connection connection) {
         setLayout(new BorderLayout());
         setBackground(new Color(255, 228, 196));
@@ -588,8 +587,6 @@ public class AdvertisementPanel extends JPanel {
 
         // Create map panel
         mapPanel = createMapPanel();
-        
-       
 
         // Load advertisements
         advertisements = loadAdvertisements(connection);
@@ -619,7 +616,6 @@ public class AdvertisementPanel extends JPanel {
         return ads;
     }
 
-   
     private void displayAdvertisement(Advertisement ad) {
         byte[] imageData = ad.getMediaFile();
         if (imageData != null && imageData.length > 0) {
@@ -642,7 +638,6 @@ public class AdvertisementPanel extends JPanel {
         }
     }
 
-    
     private JPanel createMapPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         JLabel label = new JLabel("", JLabel.CENTER);
@@ -652,10 +647,7 @@ public class AdvertisementPanel extends JPanel {
         try {
             BufferedImage svgImage = SVGHelper.loadSVGImage("src/map/Trains.svg");
             if (svgImage != null) {
-                mapImage = new BufferedImage(IMAGE_WIDTH, IMAGE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g = mapImage.createGraphics();
-                g.drawImage(svgImage, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, null);
-                g.dispose();
+                mapImage = svgImage;
 
                 updateTrainLocations(currentStationIndex);
                 BufferedImage updatedMapImage = overlayTrainLocations(mapImage);
@@ -709,10 +701,10 @@ public class AdvertisementPanel extends JPanel {
         for (TrainLocation location : trainLocations) {
             if (location.isCurrentTrain()) {
                 g.setColor(Color.GREEN); // Different color for the current train
-                g.fillOval(location.getX() - 7, location.getY() - 7, 14, 9); // Larger circle for visibility
+                g.fillOval(location.getX() - 7, location.getY() - 7, 14, 14); // Larger circle for visibility
             } else {
                 g.setColor(Color.RED);
-                g.fillOval(location.getX() - 5, location.getY() - 5, 10, 9);
+                g.fillOval(location.getX() - 5, location.getY() - 5, 10, 10);
             }
         }
 
