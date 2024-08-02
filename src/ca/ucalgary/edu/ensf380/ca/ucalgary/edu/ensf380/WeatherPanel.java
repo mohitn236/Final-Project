@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 
 public class WeatherPanel {
 
-    public static String fetchWeatherReport(String location) throws Exception {
+    public String fetchWeatherReport(String location) throws Exception {
         String baseEndpoint = "https://wttr.in/";
         String requestFormat = URLEncoder.encode("%C %t %w %p %P", StandardCharsets.UTF_8.toString());
         String requestUrl = baseEndpoint + location + "?format=" + requestFormat + "&2";
@@ -61,7 +61,6 @@ public class WeatherPanel {
         }
         return organizedData.toString().trim();
     }
-
 
     private static boolean isWeatherDescriptor(String segment) {
         String[] descriptors = {"Partly", "Cloudy", "Sunny", "Rain", "Snow"};
