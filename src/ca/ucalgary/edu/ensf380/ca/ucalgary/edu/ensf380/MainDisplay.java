@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * MainDisplay is the main JFrame for displaying city information including advertisements, news, train information, and weather updates.
  */
