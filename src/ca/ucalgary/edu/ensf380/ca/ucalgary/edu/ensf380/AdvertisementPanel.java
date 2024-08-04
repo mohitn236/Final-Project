@@ -306,8 +306,8 @@ public class AdvertisementPanel extends JPanel {
      *
      * @param panel The TrainPanel instance used to get the current station index
      */
-    public void updateTrainLocationsFromPanel(TrainPanel panel) {
-        this.currentStationIndex = panel.getCurrentStationIndex(); // Assuming TrainPanel provides this info
-        updateTrainLocations(currentStationIndex);
-    }
+//    public void updateTrainLocationsFromPanel(TrainPanel panel) {
+//        this.currentStationIndex = panel.getCurrentStationIndex(); // Assuming TrainPanel provides this info
+//        updateTrainLocations(currentStationIndex);
+//    }
 }

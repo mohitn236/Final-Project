@@ -18,7 +18,7 @@ import java.util.List;
 public class MainDisplay extends JFrame {
     private static final long serialVersionUID = 1L;
     private AdvertisementPanel advertisementPanel;
-    private TrainPanel trainPanel;
+    //private TrainPanel trainPanel;
     private NewsTickerPanel newsTickerPanel;
     private List<Station> stations;
     private int currentStationIndex = 0;
@@ -48,7 +48,7 @@ public class MainDisplay extends JFrame {
 
         stations = readStationsFromCSV("src/map/Map.csv");
 
-        trainPanel = new TrainPanel(stations);
+        //trainPanel = new TrainPanel(stations);
         newsTickerPanel = new NewsTickerPanel(newsKeyword);
 
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -76,7 +76,7 @@ public class MainDisplay extends JFrame {
 
         add(topPanel, BorderLayout.NORTH);
         add(newsTickerPanel, BorderLayout.CENTER);
-        add(trainPanel, BorderLayout.SOUTH);
+        //add(trainPanel, BorderLayout.SOUTH);
 
         // Timer to update the train station information
         javax.swing.Timer trainTimer = new javax.swing.Timer(10000, e -> updateTrainStation());
@@ -175,7 +175,7 @@ public class MainDisplay extends JFrame {
      */
     private void updateTrainStation() {
         currentStationIndex = (currentStationIndex + 1) % stations.size();
-        trainPanel.setCurrentStationIndex(currentStationIndex);
+        //trainPanel.setCurrentStationIndex(currentStationIndex);
     }
 
     /**

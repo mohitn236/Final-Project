@@ -66,7 +66,7 @@ public class SubwayMapPanel extends JPanel {
             while (i < stations.size() - 1) {
                 Station currentStation = stations.get(i);
                 Station nextStation = stations.get(i + 1);
-                g2d.drawLine(currentStation.getX(), currentStation.getY(), nextStation.getX(), nextStation.getY());
+                //g2d.drawLine(currentStation.getX(), currentStation.getY(), nextStation.getX(), nextStation.getY());
                 i++;
             }
         }
