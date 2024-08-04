@@ -54,7 +54,7 @@ public class WeatherPanel {
                 // Clean up any unwanted characters
                 String cleanedSegment = segment.replaceAll("[^\\p{L}\\p{N}\\s]", "").trim();
                 if (isWeatherDescriptor(cleanedSegment)) {
-                    cleanedSegment = cleanedSegment + " " + getWeatherEmoji(cleanedSegment);
+                     cleanedSegment = cleanedSegment; 
                 }
                 organizedData.append(cleanedSegment).append("\n");
             }
@@ -72,22 +72,6 @@ public class WeatherPanel {
         return false;
     }
 
-    private static String getWeatherEmoji(String descriptor) {
-        switch (descriptor.toLowerCase()) {
-            case "partly":
-                return "⛅";
-            case "cloudy":
-                return "☁️";
-            case "sunny":
-                return "☀️";
-            case "rain":
-                return "🌧️";
-            case "snow":
-                return "❄️";
-            default:
-                return "";
-        }
-    }
 
     private static String formatWeatherReport(String city, String date, String report) {
         StringBuilder formattedReport = new StringBuilder();

@@ -8,7 +8,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class TrainPositionsPanel extends JPanel {
-    private BufferedImage mapImage;
+    private static final long serialVersionUID = 1L;
+	private BufferedImage mapImage;
     private final int[] trainX = new int[12]; // X coordinates for the trains
     private final int[] trainY = new int[12]; // Y coordinates for the trains
 

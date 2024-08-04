@@ -11,7 +11,8 @@ import java.time.LocalTime;
  * The clock updates every second to reflect the current time.
  */
 public class AnalogClockPanel extends JPanel {
-    private static final int CLOCK_BORDER = 10; // Border space around the clock
+    private static final long serialVersionUID = 1L;
+	private static final int CLOCK_BORDER = 10; // Border space around the clock
 
     /**
      * Constructs an AnalogClockPanel object with a preferred size and starts a timer to update the clock every second.

@@ -7,7 +7,6 @@ package ca.ucalgary.edu.ensf380;
 public class Train {
     private int id;
     private String direction; // "forward" or "backward"
-    private int speed; // Stations per interval
 
     /**
      * Constructs a Train object with the specified ID, direction, and speed.
@@ -16,10 +15,9 @@ public class Train {
      * @param direction the direction of the train ("forward" or "backward")
      * @param speed     the speed of the train in stations per interval
      */
-    public Train(int id, String direction, int speed) {
+    public Train(int id, String direction) {
         this.id = id;
         this.direction = direction;
-        this.speed = speed;
     }
 
     /**
@@ -58,21 +56,5 @@ public class Train {
         this.direction = direction;
     }
 
-    /**
-     * Returns the speed of the train in stations per interval.
-     *
-     * @return the speed of the train
-     */
-    public int getSpeed() {
-        return speed;
-    }
 
-    /**
-     * Sets the speed of the train in stations per interval.
-     *
-     * @param speed the new speed of the train
-     */
-    public void setSpeed(int speed) {
-        this.speed = speed;
-    }
 }
