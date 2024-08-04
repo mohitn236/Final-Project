@@ -1,8 +1,5 @@
 package ca.ucalgary.edu.ensf380;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * The Station class represents a train station with various attributes such as row,
  * line code, station number, station code, station name, coordinates, common stations,
@@ -16,10 +13,9 @@ public class Station {
     private String stationName;
     private double x;
     private double y;
-    private String name; 
-    private List<String> lines;
-    private List<String> commonStations;
-
+    private String commonStations;
+    private boolean isCurrentTrainLocation;
+    private Train train;
 
     /**
      * Constructs a Station object with the specified attributes.
@@ -41,17 +37,43 @@ public class Station {
         this.stationName = stationName;
         this.x = x;
         this.y = y;
-   
-    }
-    
-    public Station(String name) {
-        this.name = name;
-        this.lines = new ArrayList<>();
-        this.commonStations = new ArrayList<>();
+        this.commonStations = commonStations;
+        this.isCurrentTrainLocation = false;
+        this.train = null; // Initialize with no train
     }
 
- 
+    /**
+     * Returns whether there is a train at this station.
+     *
+     * @return true if there is a train at this station, false otherwise
+     */
+    public boolean hasTrain() {
+        return train != null;
+    }
 
+    /**
+     * Returns the train at this station.
+     *
+     * @return the train at this station, or null if there is no train
+     */
+    public Train getTrain() {
+        return train;
+    }
+
+    /**
+     * Sets the train at this station.
+     *
+     * @param train the train to set at this station
+     */
+    public void setTrain(Train train) {
+        this.train = train;
+    }
+
+    /**
+     * Returns the row number of the station in the data source.
+     *
+     * @return the row number of the station
+     */
     public int getRow() {
         return row;
     }
@@ -172,32 +194,40 @@ public class Station {
     public void setY(double y) {
         this.y = y;
     }
-    
-    public List<String> getCommonStationCodes() {
+
+    /**
+     * Returns a string representing common stations between lines.
+     *
+     * @return the common stations string
+     */
+    public String getCommonStations() {
         return commonStations;
     }
 
-    public String getName() {
-        return name;
+    /**
+     * Sets a string representing common stations between lines.
+     *
+     * @param commonStations the new common stations string
+     */
+    public void setCommonStations(String commonStations) {
+        this.commonStations = commonStations;
     }
 
-    public List<String> getLines() {
-        return new ArrayList<>(lines);
+    /**
+     * Returns whether this station is a current train location.
+     *
+     * @return true if this station is a current train location, false otherwise
+     */
+    public boolean isCurrentTrainLocation() {
+        return isCurrentTrainLocation;
     }
-    
-    private void setcommonStations(String name) {
-        if (!name.isEmpty() && !name.contains(name)) {
-            commonStations.add(name);
-        }
-    }
-    
-    
-    
-    
-    
-    
-    
 
-    
+    /**
+     * Sets whether this station is a current train location.
+     *
+     * @param isCurrentTrainLocation true if this station should be marked as a current train location, false otherwise
+     */
+    public void setCurrentTrainLocation(boolean isCurrentTrainLocation) {
+        this.isCurrentTrainLocation = isCurrentTrainLocation;
+    }
 }
-    

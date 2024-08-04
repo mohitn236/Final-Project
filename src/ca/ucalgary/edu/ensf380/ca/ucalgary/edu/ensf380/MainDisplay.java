@@ -2,53 +2,51 @@ package ca.ucalgary.edu.ensf380;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-
-/**
- * MainDisplay is the main JFrame for displaying city information including advertisements, news, train information, and weather updates.
- */
-public class MainDisplay extends JFrame {
+public class MainDisplay extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private AdvertisementPanel advertisementPanel;
-    //private TrainPanel trainPanel;
+    private TrainPanel trainPanel;
     private NewsTickerPanel newsTickerPanel;
     private List<Station> stations;
     private int currentStationIndex = 0;
     private JPanel rightPanel;
-    private JLabel weatherLabel; // Label to display weather info
+    private JLabel weatherLabel; 
     private WeatherPanel weatherPanel;
+    private JButton startButton;
+    private JButton stopButton;
+    private JTextArea outputArea;
+    private Process process;
+    private ExecutorService executor = Executors.newFixedThreadPool(2);
 
-    /**
-     * Constructs the MainDisplay frame and initializes it with advertisements, train information, news ticker, and weather updates.
-     *
-     * @param newsKeyword The keyword for fetching news
-     * @param city The city for fetching weather information
-     */
-    public MainDisplay(String newsKeyword, String city) {
+    public MainDisplay(String newsKeyword, String city, Integer trainNumber) {
         setTitle("City Information Display");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         Connection connection = createDatabaseConnection();
-
-        if (connection != null) {
-            advertisementPanel = new AdvertisementPanel(connection);
-        } else {
-            advertisementPanel = new AdvertisementPanel(null);
-        }
+        advertisementPanel = new AdvertisementPanel(connection);
 
         stations = readStationsFromCSV("src/map/Map.csv");
 
-        //trainPanel = new TrainPanel(stations);
+        trainPanel = new TrainPanel(stations);
+        if (trainNumber != null) {
+            trainPanel.selectTrain(trainNumber);
+        }
         newsTickerPanel = new NewsTickerPanel(newsKeyword);
 
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -56,17 +54,16 @@ public class MainDisplay extends JFrame {
         JPanel clockPanel = new JPanel();
 
         rightPanel = new JPanel(new BorderLayout());
-        rightPanel.setPreferredSize(new Dimension(300, 0)); // Set a fixed width for the right panel
+        rightPanel.setPreferredSize(new Dimension(300, 0));
 
         weatherPanel = new WeatherPanel();
         weatherLabel = new JLabel("Weather Information", JLabel.CENTER);
         weatherLabel.setFont(new Font("Arial", Font.BOLD, 16));
         rightPanel.add(weatherLabel, BorderLayout.NORTH);
 
-        // Replace clock panel with AnalogClockPanel
         AnalogClockPanel analogClockPanel = new AnalogClockPanel();
         clockPanel.add(analogClockPanel);
-        clockPanel.setBackground(Color.GRAY); // Placeholder for clock panel
+        clockPanel.setBackground(Color.GRAY);
 
         topRightPanel.add(clockPanel);
         topRightPanel.add(rightPanel);
@@ -76,23 +73,32 @@ public class MainDisplay extends JFrame {
 
         add(topPanel, BorderLayout.NORTH);
         add(newsTickerPanel, BorderLayout.CENTER);
-        //add(trainPanel, BorderLayout.SOUTH);
+        add(trainPanel, BorderLayout.SOUTH);
 
-        // Timer to update the train station information
+        JPanel processPanel = new JPanel(new BorderLayout());
+        startButton = new JButton("Start Process");
+        stopButton = new JButton("Stop Process");
+        outputArea = new JTextArea();
+        outputArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(outputArea);
+
+        startButton.addActionListener(this);
+        stopButton.addActionListener(this);
+
+        processPanel.add(startButton, BorderLayout.NORTH);
+        processPanel.add(stopButton, BorderLayout.CENTER);
+        processPanel.add(scrollPane, BorderLayout.SOUTH);
+
+        add(processPanel, BorderLayout.EAST);
+
         javax.swing.Timer trainTimer = new javax.swing.Timer(10000, e -> updateTrainStation());
         trainTimer.start();
 
-        // Fetch and display weather information for the city
         updateWeatherInfo(city);
 
         setVisible(true);
     }
 
-    /**
-     * Updates the weather information displayed on the weatherLabel.
-     *
-     * @param city The city for which the weather information is fetched
-     */
     private void updateWeatherInfo(String city) {
         new Thread(() -> {
             try {
@@ -105,11 +111,6 @@ public class MainDisplay extends JFrame {
         }).start();
     }
 
-    /**
-     * Creates a connection to the PostgreSQL database.
-     *
-     * @return The database connection, or null if connection fails
-     */
     private Connection createDatabaseConnection() {
         try {
             Class.forName("org.postgresql.Driver");
@@ -127,12 +128,6 @@ public class MainDisplay extends JFrame {
         return null;
     }
 
-    /**
-     * Reads the station data from a CSV file and returns a list of Station objects.
-     *
-     * @param filePath The path to the CSV file
-     * @return A list of Station objects
-     */
     private List<Station> readStationsFromCSV(String filePath) {
         List<Station> stations = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -170,22 +165,75 @@ public class MainDisplay extends JFrame {
         return stations;
     }
 
-    /**
-     * Updates the current station index in the TrainPanel.
-     */
     private void updateTrainStation() {
         currentStationIndex = (currentStationIndex + 1) % stations.size();
-        //trainPanel.setCurrentStationIndex(currentStationIndex);
+        trainPanel.setCurrentStationIndex(currentStationIndex);
     }
 
-    /**
-     * Main method to run the application.
-     *
-     * @param args Command-line arguments for news keyword and city
-     */
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == startButton) {
+            startProcess();
+        } else if (e.getSource() == stopButton) {
+            stopProcess();
+        }
+    }
+
+    private void startProcess() {
+        if (process == null) {
+            try {
+                ProcessBuilder builder = new ProcessBuilder("java", "-jar", "./exe/SubwaySimulator.jar", "--in", "./data/subway.csv", "--out", "./out");
+                builder.redirectErrorStream(true);
+                process = builder.start();
+
+                executor.execute(() -> handleProcessOutput());
+
+                executor.execute(() -> {
+                    try {
+                        process.waitFor();
+                        process = null;
+                        SwingUtilities.invokeLater(() -> {
+                            stopButton.setEnabled(false);
+                            startButton.setEnabled(true);
+                        });
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                });
+
+                stopButton.setEnabled(true);
+                startButton.setEnabled(false);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private void handleProcessOutput() {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+                //SwingUtilities.invokeLater(() -> outputArea.append(line + "\n"));
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void stopProcess() {
+        if (process != null) {
+            process.destroy();
+            process = null;
+            stopButton.setEnabled(false);
+            startButton.setEnabled(true);
+        }
+    }
+
     public static void main(String[] args) {
-        String newsKeyword = args.length > 0 ? args[0] : "calgary"; // Default to Calgary if no news keyword is provided
-        String city = args.length > 1 ? args[1] : "Calgary"; // Default to Calgary if no city is provided
-        SwingUtilities.invokeLater(() -> new MainDisplay(newsKeyword, city));
+        String newsKeyword = args.length > 0 ? args[0] : "calgary";
+        String city = args.length > 1 ? args[1] : "Calgary";
+        Integer trainNumber = args.length > 2 ? Integer.parseInt(args[2]) : null;
+
+        SwingUtilities.invokeLater(() -> new MainDisplay(newsKeyword, city, trainNumber));
     }
 }

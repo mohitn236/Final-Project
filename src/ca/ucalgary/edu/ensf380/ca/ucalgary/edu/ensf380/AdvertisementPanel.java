@@ -33,6 +33,7 @@ public class AdvertisementPanel extends JPanel {
     private final int IMAGE_HEIGHT = 600;
     private static final long serialVersionUID = 1L;
     private int currentStationIndex;
+    private int currentTrainId;
 
     /**
      * Constructs an AdvertisementPanel and initializes it with advertisements and train information.
@@ -200,7 +201,11 @@ public class AdvertisementPanel extends JPanel {
 
         for (TrainLocation location : trainLocations) {
             if (location.isCurrentTrain()) {
-                g.setColor(Color.GREEN); // Different color for the current train
+                if (location.getId() == currentTrainId) {
+                    g.setColor(Color.GREEN); // Green for the current train
+                } else {
+                    g.setColor(Color.GRAY); // Gray for other trains
+                }
                 g.fillOval(location.getX() - 7, location.getY() - 7, 14, 14); // Larger circle for visibility
             } else {
                 g.setColor(Color.RED);
@@ -306,8 +311,8 @@ public class AdvertisementPanel extends JPanel {
      *
      * @param panel The TrainPanel instance used to get the current station index
      */
-//    public void updateTrainLocationsFromPanel(TrainPanel panel) {
-//        this.currentStationIndex = panel.getCurrentStationIndex(); // Assuming TrainPanel provides this info
-//        updateTrainLocations(currentStationIndex);
-//    }
+    public void updateTrainLocationsFromPanel(TrainPanel panel) {
+        this.currentStationIndex = panel.getCurrentStationIndex(); // Assuming TrainPanel provides this info
+        updateTrainLocations(currentStationIndex);
+    }
 }
