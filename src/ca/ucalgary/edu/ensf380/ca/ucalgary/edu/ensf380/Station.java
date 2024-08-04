@@ -1,5 +1,8 @@
 package ca.ucalgary.edu.ensf380;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The Station class represents a train station with various attributes such as row,
  * line code, station number, station code, station name, coordinates, common stations,
@@ -13,6 +16,9 @@ public class Station {
     private String stationName;
     private double x;
     private double y;
+    private String name; 
+    private List<String> lines;
+    private List<String> commonStations;
 
 
     /**
@@ -36,6 +42,12 @@ public class Station {
         this.x = x;
         this.y = y;
    
+    }
+    
+    public Station(String name) {
+        this.name = name;
+        this.lines = new ArrayList<>();
+        this.commonStations = new ArrayList<>();
     }
 
  
@@ -160,5 +172,32 @@ public class Station {
     public void setY(double y) {
         this.y = y;
     }
+    
+    public List<String> getCommonStationCodes() {
+        return commonStations;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<String> getLines() {
+        return new ArrayList<>(lines);
+    }
+    
+    private void setcommonStations(String name) {
+        if (!name.isEmpty() && !name.contains(name)) {
+            commonStations.add(name);
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+
+    
 }
     
