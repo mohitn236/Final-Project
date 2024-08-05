@@ -1,61 +1,3 @@
-//package ca.ucalgary.edu.ensf380;
-//
-//import javax.swing.*;
-//import java.awt.*;
-//import java.awt.geom.Ellipse2D;
-//import java.awt.image.BufferedImage;
-//import java.util.List;
-//
-//public class MapPanel extends JPanel {
-//    private BufferedImage mapImage;
-//    private List<Train> trains;
-//    private int selectedTrainId;
-//
-//    public MapPanel(String mapFilePath, List<Train> trains, int selectedTrainId) {
-//        this.mapImage = SVGHelper.loadSVGImage(mapFilePath);
-//        this.trains = trains;
-//        this.selectedTrainId = selectedTrainId;
-//        setPreferredSize(new Dimension(mapImage.getWidth(), mapImage.getHeight()));
-//    }
-//
-//    @Override
-//    protected void paintComponent(Graphics g) {
-//        super.paintComponent(g);
-//        Graphics2D g2d = (Graphics2D) g;
-//
-//        // Draw the map
-//        g2d.drawImage(mapImage, 0, 0, null);
-//
-//        // Draw the trains
-//        for (Train train : trains) {
-//            Station station = train.getCurrentStation();
-//            if (station != null) {
-//                double x = station.getX();
-//                double y = station.getY();
-//                Ellipse2D.Double trainCircle = new Ellipse2D.Double(x - 5, y - 5, 10, 10);
-//                
-//                if (train.getId() == selectedTrainId) {
-//                    g2d.setColor(Color.RED); // Highlight the selected train
-//                } else {
-//                    g2d.setColor(Color.BLUE);
-//                }
-//                g2d.fill(trainCircle);
-//                g2d.setColor(Color.BLACK);
-//                g2d.draw(trainCircle);
-//            }
-//        }
-//    }
-//
-//    public void updateTrains(List<Train> updatedTrains) {
-//        this.trains = updatedTrains;
-//        repaint();
-//    }
-//
-//    public void setSelectedTrainId(int selectedTrainId) {
-//        this.selectedTrainId = selectedTrainId;
-//        repaint();
-//    }
-//}
 
 package ca.ucalgary.edu.ensf380;
 
@@ -87,7 +29,11 @@ public class MapPanel extends JPanel {
         this.trains = trains;
         this.selectedTrainId = selectedTrainId;
         loadMapImage();
+        setPreferredSize(new Dimension(1200, 600)); // Adjust to desired size or use null layout
+        setLayout(new BorderLayout()); // Use BorderLayout to fill the panel
     }
+    
+
 
     /**
      * Loads the map image from the SVG file.
