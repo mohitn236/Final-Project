@@ -49,7 +49,18 @@ public class Station {
     }
 
 
-    /**
+    public Station(int row, String lineCode, int stationNumber, String stationCode, String stationName, double x,
+			double y) {
+    	this.row = row;
+    	this.lineCode = lineCode;
+    	this.stationNumber = stationNumber;
+    	this.stationCode = stationCode;
+    	this.stationName = stationName;
+    	this.x = x;
+    	this.y = y;
+	}
+
+	/**
      * Returns whether there is a train at this station.
      *
      * @return true if there is a train at this station, false otherwise

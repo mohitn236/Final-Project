@@ -24,7 +24,7 @@ public class WeatherPanel {
 
     private static String getCurrentDate() {
         LocalDate today = LocalDate.now();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, MMMM dd");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("YYYY, MMMM dd");
         return today.format(dateFormatter);
     }
 
