@@ -41,6 +41,13 @@ public class Station {
         this.isCurrentTrainLocation = false;
         this.train = null; // Initialize with no train
     }
+    
+    public Station(int stationNumber, double x, double y) {
+        this.stationNumber = stationNumber;
+        this.x = x;
+        this.y = y;
+    }
+
 
     /**
      * Returns whether there is a train at this station.
