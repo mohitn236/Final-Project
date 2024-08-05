@@ -254,13 +254,14 @@ public class MainDisplay extends JFrame implements ActionListener {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                final String currentLine = line; // Effectively final
-                SwingUtilities.invokeLater(() -> outputArea.append(currentLine + "\n"));
+                // Print the output to the console
+                System.out.println(line);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
+
 
     /**
      * Stops the external process if it is running.

@@ -136,42 +136,46 @@ public class AdvertisementPanel extends JPanel {
             public void run() {
                 SwingUtilities.invokeLater(() -> {
                     if (showingMap) {
-                        remove(mapPanel); // Remove the map panel
-                        add(adLabel, BorderLayout.CENTER); // Re-add the ad label
+                        // Hide the map and show the advertisement
+                        remove(mapPanel);
+                        add(adLabel, BorderLayout.CENTER);
                         showingMap = false;
                     } else {
-                        remove(adLabel); // Remove the ad label
+                        // Hide the advertisement and show the map
+                        remove(adLabel);
                         currentAdIndex = (currentAdIndex + 1) % advertisements.size();
                         displayAdvertisement(advertisements.get(currentAdIndex));
                         updateTrainInfo(); // Update train info before displaying the map
-                        add(mapPanel, BorderLayout.CENTER); // Add the map panel
+                        add(mapPanel, BorderLayout.CENTER);
                         showingMap = true;
                     }
                     revalidate(); // Revalidate the layout
                     repaint(); // Repaint the panel
                 });
             }
-        }, 0, 15000); // Change ads every 15 seconds (10s ad + 5s map)
-    }
-    /**
-     * Displays the map with the current train locations.
-     */
-    private void displayMap() {
-        updateTrains(trains);
-        add(mapPanel, BorderLayout.CENTER);
-        revalidate();
-        repaint();
+        }, 0, 10000); // Change ads every 10 seconds
+
+        // Additional TimerTask to handle map display timing
+        TimerTask mapDisplayTask = new TimerTask() {
+            @Override
+            public void run() {
+                SwingUtilities.invokeLater(() -> {
+                    if (showingMap) {
+                        // Hide the map and show the advertisement
+                        remove(mapPanel);
+                        add(adLabel, BorderLayout.CENTER);
+                        showingMap = false;
+                        revalidate();
+                        repaint();
+                    }
+                });
+            }
+        };
+
+        // Schedule the map display task to run every 15 seconds
+        timer.scheduleAtFixedRate(mapDisplayTask, 5000, 50000); // Initial delay of 5 seconds, then repeat every 10 seconds
     }
 
-    /**
-     * Hides the map and returns to displaying advertisements.
-     */
-    private void hideMap() {
-        remove(mapPanel);
-        add(adLabel, BorderLayout.CENTER);
-        revalidate();
-        repaint();
-    }
 
     /**
      * Updates the train information displayed on the panel.
