@@ -16,6 +16,11 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * MainDisplay class represents the main frame of the application, 
+ * which includes panels for advertisements, train information, news ticker, 
+ * and weather information.
+ */
 public class MainDisplay extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private AdvertisementPanel advertisementPanel;
@@ -24,7 +29,7 @@ public class MainDisplay extends JFrame implements ActionListener {
     private List<Station> stations;
     private int currentStationIndex = 0;
     private JPanel rightPanel;
-    private JLabel weatherLabel; 
+    private JLabel weatherLabel;
     private WeatherPanel weatherPanel;
     private JButton startButton;
     private JButton stopButton;
@@ -32,6 +37,13 @@ public class MainDisplay extends JFrame implements ActionListener {
     private Process process;
     private ExecutorService executor = Executors.newFixedThreadPool(2);
 
+    /**
+     * Constructs the MainDisplay frame.
+     *
+     * @param newsKeyword the keyword for fetching news
+     * @param city the city for fetching weather information
+     * @param trainNumber the train number to start with, can be null
+     */
     public MainDisplay(String newsKeyword, String city, Integer trainNumber) {
         setTitle("City Information Display");
         setSize(1280, 720);
@@ -99,6 +111,11 @@ public class MainDisplay extends JFrame implements ActionListener {
         setVisible(true);
     }
 
+    /**
+     * Updates the weather information.
+     *
+     * @param city the city for fetching weather information
+     */
     private void updateWeatherInfo(String city) {
         new Thread(() -> {
             try {
@@ -111,6 +128,11 @@ public class MainDisplay extends JFrame implements ActionListener {
         }).start();
     }
 
+    /**
+     * Creates a database connection.
+     *
+     * @return the database connection
+     */
     private Connection createDatabaseConnection() {
         try {
             Class.forName("org.postgresql.Driver");
@@ -128,6 +150,12 @@ public class MainDisplay extends JFrame implements ActionListener {
         return null;
     }
 
+    /**
+     * Reads stations from a CSV file.
+     *
+     * @param filePath the path to the CSV file
+     * @return a list of stations
+     */
     private List<Station> readStationsFromCSV(String filePath) {
         List<Station> stations = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -165,11 +193,19 @@ public class MainDisplay extends JFrame implements ActionListener {
         return stations;
     }
 
+    /**
+     * Updates the current train station index and refreshes the train panel.
+     */
     private void updateTrainStation() {
         currentStationIndex = (currentStationIndex + 1) % stations.size();
         trainPanel.setcurrentTrainNumber(currentStationIndex);
     }
 
+    /**
+     * Handles button actions for starting and stopping the process.
+     *
+     * @param e the action event
+     */
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == startButton) {
             startProcess();
@@ -178,6 +214,9 @@ public class MainDisplay extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Starts the external process and handles its output.
+     */
     private void startProcess() {
         if (process == null) {
             try {
@@ -208,6 +247,9 @@ public class MainDisplay extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Handles the output from the external process.
+     */
     private void handleProcessOutput() {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
@@ -220,7 +262,9 @@ public class MainDisplay extends JFrame implements ActionListener {
         }
     }
 
-
+    /**
+     * Stops the external process if it is running.
+     */
     private void stopProcess() {
         if (process != null) {
             process.destroy();
@@ -230,6 +274,11 @@ public class MainDisplay extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * The main method to start the application.
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame dummyFrame = new JFrame(); // Dummy frame to use as parent for the dialog

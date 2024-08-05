@@ -1,7 +1,7 @@
 package ca.ucalgary.edu.ensf380;
 
 /**
- * The Train class represents a train with an ID, direction, and speed.
+ * The Train class represents a train with an ID, direction, and station.
  * It provides methods to access and modify these properties.
  */
 public class Train {
@@ -14,18 +14,23 @@ public class Train {
     private int y;
 
     /**
-     * Constructs a Train object with the specified ID, direction, and speed.
+     * Constructs a Train object with the specified ID and direction.
      *
      * @param id        the unique identifier of the train
      * @param direction the direction of the train ("forward" or "backward")
-     * @param station 
-     * @param speed     the speed of the train in stations per interval
      */
     public Train(int id, String direction) {
         this.id = id;
         this.direction = direction;
     }
     
+    /**
+     * Constructs a Train object with the specified ID, name, and station.
+     *
+     * @param id      the unique identifier of the train
+     * @param name    the name of the train
+     * @param station the station where the train is located
+     */
     public Train(int id, String name, Station station) {
         this.id = id;
         this.name = name;
@@ -68,32 +73,66 @@ public class Train {
         this.direction = direction;
     }
 
-	public Station getCurrentStation() {
-		return currentStation;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public Station getStation() {
-		return station;
-	}
-	
-	public void setStaton(Station station) {
-		this.station = station;
-	}
-	
-	public int getX(){
-		return x;
-	}
-	
-	public int getY() {
-		return y;
-	}
+    /**
+     * Returns the current station of the train.
+     *
+     * @return the current station of the train
+     */
+    public Station getCurrentStation() {
+        return currentStation;
+    }
 
+    /**
+     * Returns the name of the train.
+     *
+     * @return the name of the train
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the name of the train.
+     *
+     * @param name the new name of the train
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Returns the station where the train is located.
+     *
+     * @return the station where the train is located
+     */
+    public Station getStation() {
+        return station;
+    }
+
+    /**
+     * Sets the station where the train is located.
+     *
+     * @param station the new station where the train is located
+     */
+    public void setStation(Station station) {
+        this.station = station;
+    }
+
+    /**
+     * Returns the X coordinate of the train.
+     *
+     * @return the X coordinate of the train
+     */
+    public int getX() {
+        return x;
+    }
+
+    /**
+     * Returns the Y coordinate of the train.
+     *
+     * @return the Y coordinate of the train
+     */
+    public int getY() {
+        return y;
+    }
 }
