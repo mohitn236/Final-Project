@@ -212,14 +212,13 @@ public class MainDisplay extends JFrame implements ActionListener {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                final String currentLine = line; // Effectively final
-                SwingUtilities.invokeLater(() -> outputArea.append(currentLine + "\n"));
+                System.out.println(line);
+                //SwingUtilities.invokeLater(() -> outputArea.append(line + "\n"));
             }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
-
 
     private void stopProcess() {
         if (process != null) {
@@ -231,18 +230,10 @@ public class MainDisplay extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame dummyFrame = new JFrame(); // Dummy frame to use as parent for the dialog
-            dummyFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        String newsKeyword = args.length > 0 ? args[0] : "calgary";
+        String city = args.length > 1 ? args[1] : "Calgary";
+        Integer trainNumber = args.length > 2 ? Integer.parseInt(args[2]) : null;
 
-            // Show train selection dialog
-            Integer trainNumber = TrainSelectionDialog.selectTrain(dummyFrame);
-
-            // Show main application window
-            String newsKeyword = args.length > 0 ? args[0] : "calgary";
-            String city = args.length > 1 ? args[1] : "Calgary";
-            
-            new MainDisplay(newsKeyword, city, trainNumber);
-        });
+        SwingUtilities.invokeLater(() -> new MainDisplay(newsKeyword, city, trainNumber));
     }
 }
