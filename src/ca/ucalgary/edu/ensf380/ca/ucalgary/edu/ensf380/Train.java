@@ -70,7 +70,10 @@ public class Train {
      * @param direction the new direction of the train ("forward" or "backward")
      */
     public void setDirection(String direction) {
-        this.direction = direction;
+        if ("forward".equals(direction) || "backward".equals(direction)) {
+            this.direction = direction;
+        }
+        // Else do nothing or handle invalid input as needed
     }
 
     /**

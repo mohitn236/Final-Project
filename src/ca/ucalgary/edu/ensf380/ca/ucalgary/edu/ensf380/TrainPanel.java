@@ -120,10 +120,10 @@ public class TrainPanel extends JPanel {
         }
     }
 
-    /**
+   /**
      * Initializes train objects and assigns them to stations.
      */
-    private void initializeTrains() {
+    public void initializeTrains() {
         trains = new ArrayList<>();
         int numberOfTrains = 12;
         int distanceBetweenTrains = 4;
@@ -142,7 +142,7 @@ public class TrainPanel extends JPanel {
     /**
      * Starts the simulation of train movement and updates the display at regular intervals.
      */
-    private void startTrainSimulation() {
+    public void startTrainSimulation() {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -159,7 +159,7 @@ public class TrainPanel extends JPanel {
     /**
      * Updates the train information displayed on the panel.
      */
-    private void updateTrainInfo() {
+    public void updateTrainInfo() {
         StringBuilder info = new StringBuilder("<html>");
 
         // Ensure we have at least 5 stations to show
@@ -184,7 +184,7 @@ public class TrainPanel extends JPanel {
     /**
      * Outputs the current positions of trains to a text file.
      */
-    private void outputTrainPositions() {
+    public void outputTrainPositions() {
         try (FileWriter writer = new FileWriter("train_positions.txt")) {
             for (Station station : stations) {
                 if (station.hasTrain()) {

@@ -1,72 +1,81 @@
-//package ca.ucalgary.edu.ensf380;
-//
-//import org.junit.jupiter.api.Test;
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//public class StationTest {
-//
-//    @Test
-//    public void testStationConstructorAndGetters() {
-//        Station station = new Station(1, "L1", 10, "S10", "StationName", 50.0, 100.0, "CS1, CS2");
-//
-//        assertEquals(1, station.getRow(), "Row should be 1");
-//        assertEquals("L1", station.getLineCode(), "Line code should be 'L1'");
-//        assertEquals(10, station.getStationNumber(), "Station number should be 10");
-//        assertEquals("S10", station.getStationCode(), "Station code should be 'S10'");
-//        assertEquals("StationName", station.getStationName(), "Station name should be 'StationName'");
-//        assertEquals(50.0, station.getX(), 0.01, "X-coordinate should be 50.0");
-//        assertEquals(100.0, station.getY(), 0.01, "Y-coordinate should be 100.0");
-//        assertEquals("CS1, CS2", station.getCommonStations(), "Common stations should be 'CS1, CS2'");
-//        assertFalse(station.isCurrentTrainLocation(), "Should not be a current train location by default");
-//        assertNull(station.getTrain(), "Train should be null by default");
-//    }
-//
-//    @Test
-//    public void testSetters() {
-//        Station station = new Station(1, "L1", 10, "S10", "StationName", 50.0, 100.0, "CS1, CS2");
-//
-//        station.setRow(2);
-//        station.setLineCode("L2");
-//        station.setStationNumber(20);
-//        station.setStationCode("S20");
-//        station.setStationName("NewStationName");
-//        station.setX(60.0);
-//        station.setY(120.0);
-//        station.setCommonStations("CS3, CS4");
-//        station.setCurrentTrainLocation(true);
-//
-//        assertEquals(2, station.getRow(), "Row should be 2");
-//        assertEquals("L2", station.getLineCode(), "Line code should be 'L2'");
-//        assertEquals(20, station.getStationNumber(), "Station number should be 20");
-//        assertEquals("S20", station.getStationCode(), "Station code should be 'S20'");
-//        assertEquals("NewStationName", station.getStationName(), "Station name should be 'NewStationName'");
-//        assertEquals(60.0, station.getX(), 0.01, "X-coordinate should be 60.0");
-//        assertEquals(120.0, station.getY(), 0.01, "Y-coordinate should be 120.0");
-//        assertEquals("CS3, CS4", station.getCommonStations(), "Common stations should be 'CS3, CS4'");
-//        assertTrue(station.isCurrentTrainLocation(), "Should be a current train location");
-//    }
-//
-//    @Test
-//    public void testTrainHandling() {
-//        Station station = new Station(1, "L1", 10, "S10", "StationName", 50.0, 100.0, "CS1, CS2");
-//        Train train = new Train(1, "forward", 5);
-//
-//        station.setTrain(train);
-//
-//        assertTrue(station.hasTrain(), "Station should have a train");
-//        assertEquals(train, station.getTrain(), "Train should be the same as set");
-//    }
-//
-//    @Test
-//    public void testRemoveTrain() {
-//        Station station = new Station(1, "L1", 10, "S10", "StationName", 50.0, 100.0, "CS1, CS2");
-//        Train train = new Train(1, "forward", 5);
-//
-//        station.setTrain(train);
-//        assertTrue(station.hasTrain(), "Station should have a train");
-//
-//        station.setTrain(null);
-//        assertFalse(station.hasTrain(), "Station should not have a train");
-//        assertNull(station.getTrain(), "Train should be null");
-//    }
-//}
+package ca.ucalgary.edu.ensf380;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class StationTest {
+
+    @Test
+    public void testStationConstructorWithAllParameters() {
+        Station station = new Station(1, "L1", 5, "S001", "Central", 100.0, 200.0, "Station A, Station B");
+
+        assertEquals(1, station.getRow());
+        assertEquals("L1", station.getLineCode());
+        assertEquals(5, station.getStationNumber());
+        assertEquals("S001", station.getStationCode());
+        assertEquals("Central", station.getStationName());
+        assertEquals(100.0, station.getX());
+        assertEquals(200.0, station.getY());
+        assertEquals("Station A, Station B", station.getCommonStations());
+        assertFalse(station.isCurrentTrainLocation());
+        assertNull(station.getTrain());
+    }
+
+    @Test
+    public void testStationConstructorWithBasicParameters() {
+        Station station = new Station(10, 50.0, 75.0);
+
+        assertEquals(10, station.getStationNumber());
+        assertEquals(50.0, station.getX());
+        assertEquals(75.0, station.getY());
+        assertFalse(station.isCurrentTrainLocation());
+        assertNull(station.getTrain());
+    }
+
+    @Test
+    public void testStationConstructorWithPartialParameters() {
+        Station station = new Station(1, "L1", 10, "S002", "North", 150.0, 250.0);
+
+        assertEquals(1, station.getRow());
+        assertEquals("L1", station.getLineCode());
+        assertEquals(10, station.getStationNumber());
+        assertEquals("S002", station.getStationCode());
+        assertEquals("North", station.getStationName());
+        assertEquals(150.0, station.getX());
+        assertEquals(250.0, station.getY());
+        assertFalse(station.isCurrentTrainLocation());
+        assertNull(station.getTrain());
+    }
+
+    @Test
+    public void testHasTrainWhenTrainIsNull() {
+        Station station = new Station(1, "L1", 10, "S003", "South", 200.0, 300.0);
+        assertFalse(station.hasTrain());
+    }
+
+    @Test
+    public void testHasTrainWhenTrainIsNotNull() {
+        Train train = new Train(1, null); // Assuming a Train class with constructor Train(int id)
+        Station station = new Station(1, "L1", 10, "S003", "South", 200.0, 300.0);
+        station.setTrain(train);
+        assertTrue(station.hasTrain());
+    }
+
+    @Test
+    public void testSetTrain() {
+        Train train = new Train(2, null); // Assuming a Train class with constructor Train(int id)
+        Station station = new Station(1, "L1", 10, "S004", "East", 250.0, 350.0);
+        station.setTrain(train);
+        assertEquals(train, station.getTrain());
+    }
+
+    @Test
+    public void testSetCurrentTrainLocation() {
+        Station station = new Station(1, "L1", 10, "S005", "West", 300.0, 400.0);
+        station.setCurrentTrainLocation(true);
+        assertTrue(station.isCurrentTrainLocation());
+
+        station.setCurrentTrainLocation(false);
+        assertFalse(station.isCurrentTrainLocation());
+    }
+}

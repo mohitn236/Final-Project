@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
  * which includes panels for advertisements, train information, news ticker, 
  * and weather information.
  */
+
 public class MainDisplay extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private AdvertisementPanel advertisementPanel;
